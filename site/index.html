@@ -6,6 +6,7 @@
 <title>Επιδόματα Τώρα · Επιδόματα, πληρωμές, συντάξεις και προγράμματα</title>
 <meta name="description" content="Επιδόματα, ημερομηνίες πληρωμών, συντάξεις, προγράμματα ΔΥΠΑ και επίσημες ανακοινώσεις σε ένα σημείο. Κάθε πληροφορία με σύνδεσμο στην επίσημη πηγή.">
 <link rel="canonical" href="https://epidomatatora.gr/">
+<meta name="discounts-updated" content="02/10/2026">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
@@ -310,6 +311,40 @@ main { padding-bottom: 56px; }
 .side-card .btn { width: 100%; margin-top: 12px; }
 .note { background: #fff8e8; border: 1px solid #f3dca5; color: #6b4b00; border-radius: var(--r); padding: 12px 14px; font-size: 14px; margin-top: 12px; }
 
+
+/* ---------- Discounts & privileges ---------- */
+.discount-intro { margin-top: 24px; }
+.discount-filters { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(210px, .6fr); gap: 12px; }
+.discount-filters label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.discount-filters input, .discount-filters select { height: 44px; border: 1.5px solid var(--line); border-radius: 9px; padding: 0 12px; background: #fff; font-size: 15.5px; width: 100%; }
+.discount-cats { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+.discount-cat { border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 7px 13px; font-size: 14px; font-weight: 700; cursor: pointer; color: var(--ink); }
+.discount-cat[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+.discount-groups { display: grid; gap: 18px; margin-top: 20px; }
+.discount-group { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; }
+.discount-group-hd { padding: 14px 16px; background: var(--tint); border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.discount-group-hd h3 { margin: 0; font-size: 18px; }
+.discount-group-hd p { margin-top: 3px; color: var(--muted); font-size: 13.5px; }
+.discount-rows { display: grid; }
+.discount-row { display: grid; grid-template-columns: minmax(150px, 1.15fr) 110px minmax(180px, 1.6fr); gap: 14px; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.discount-row:last-child { border-bottom: 0; }
+.discount-row .name { font-weight: 800; color: var(--navy); }
+.discount-row .off { font-size: 18px; font-weight: 800; color: var(--ok); }
+.discount-row .how { color: var(--muted); font-size: 14px; }
+.discount-card-note { margin-top: 10px; }
+.discount-stats { margin-top: 14px; display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+.discount-stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; }
+.discount-stat b { display: block; color: var(--navy); font-size: 18px; }
+.discount-stat span { color: var(--muted); font-size: 13px; }
+.discount-empty { margin-top: 18px; }
+@media (max-width: 700px) {
+  .discount-filters { grid-template-columns: minmax(0, 1fr); }
+  .discount-stats { grid-template-columns: minmax(0, 1fr); }
+  .discount-row { grid-template-columns: minmax(0, 1fr) auto; gap: 7px 12px; }
+  .discount-row .how { grid-column: 1 / -1; }
+  .discount-group-hd { display: grid; }
+}
+
 /* Calendar */
 .cal-wrap { display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 24px; align-items: start; margin-top: 24px; }
 .cal { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 16px; position: sticky; top: 88px; }
@@ -505,6 +540,7 @@ footer.site .bottom { border-top: 1px solid rgba(255,255,255,.14); padding: 16px
         <li><a href="/syntaxeis" data-link>Συντάξεις</a></li>
         <li><a href="/anakoinoseis" data-link>Ανακοινώσεις</a></li>
         <li><a href="/programmata" data-link>Προγράμματα</a></li>
+         <li><a href="/ekptoseis" data-link>Εκπτώσεις & προνόμια</a></li>
       </ul></div>
       <div><h4>Αξιοπιστία</h4><ul>
         <li><a href="/syxnes-erotiseis" data-link>Συχνές ερωτήσεις</a></li>
@@ -533,6 +569,8 @@ footer.site .bottom { border-top: 1px solid rgba(255,255,255,.14); padding: 16px
    ========================================================== */
 const SITE = "https://epidomatatora.gr";
 const ENIMEROSI = "2026-10-01"; // τελευταία ενημέρωση δεδομένων
+let DISCOUNTS = null;
+let DISCOUNTS_PROMISE = null;
 
 let ANAKOINOSEIS = [
   { date: "2026-09-29", foreas: "ΟΠΕΚΑ", title: "Α21: η πλατφόρμα ανοίγει ξανά τη Δευτέρα 5/10 και γίνεται έκτακτη πληρωμή στις 9/10",
@@ -557,6 +595,29 @@ let ANAKOINOSEIS = [
     text: "Αφορά συνταξιούχους άνω των 65, όσους άνω των 60 λαμβάνουν μόνο σύνταξη χηρείας, άτομα με αναπηρία και ανασφάλιστους υπερήλικες. Δίνεται σε μόνιμη βάση.",
     url: "https://www.government.gov.gr/exidikefsi-ton-ikonomikon-metron-pou-anakinose-prothipourgos-stin-90i-deth/", link: "400" }
 ];
+
+
+async function loadDiscounts() {
+  if (Array.isArray(DISCOUNTS)) return DISCOUNTS;
+  if (DISCOUNTS_PROMISE) return DISCOUNTS_PROMISE;
+  DISCOUNTS_PROMISE = fetch("/discounts.json", { cache: "no-store" })
+    .then(r => r.ok ? r.json() : { categories: [] })
+    .then(d => {
+      DISCOUNTS = Array.isArray(d?.categories) ? d.categories : [];
+      return DISCOUNTS;
+    })
+    .catch(() => {
+      DISCOUNTS = [];
+      return DISCOUNTS;
+    });
+  return DISCOUNTS_PROMISE;
+}
+const discountTotal = cats => cats.reduce((n, c) => n + c.groups.reduce((m, g) => m + g.rows.length, 0), 0);
+const discountApply = value => {
+  const s = String(value || "");
+  const m = s.match(/(?:https?:\/\/)?(?:www\.)?([a-z0-9.-]+\.[a-z]{2,})(?:\/\S*)?/i);
+  return m ? `https://${m[0].replace(/^https?:\/\//i, "").replace(/^www\./i, "www.")}` : "";
+};
 
 /* cat: κατηγορία · status: open | wait | past
    anepivevaiota: πεδία χωρίς επίσημη επιβεβαίωση (poso, pote, prothesmia, proypotheseis) */
@@ -1011,6 +1072,13 @@ function viewHome() {
       <div class="cards">${topical.map(card).join("")}</div>
     </section>
 
+    <section class="section" aria-labelledby="discounts-h">
+      ${secHead("ΕΚΠΤΩΣΕΙΣ & ΠΡΟΝΟΜΙΑ", "Βρες καταστήματα και επιχειρήσεις που δίνουν προνόμια ανά κατηγορία.", ["/ekptoseis", "Δες όλες τις εκπτώσεις"], "discounts-h")}
+      <div class="trust" style="margin-top:0">
+        ${ICON_CHECK}<div><b>Νέα ενότητα</b><small>Φοιτητές · άνεργοι · τρίτεκνοι · πολύτεκνοι · ΑμεΑ. Έλεγχε πάντα τους όρους πριν από την αγορά.</small></div>
+      </div>
+    </section>
+
     <section class="section" aria-labelledby="prog-h">
       ${secHead("ΝΕΑ ΠΡΟΓΡΑΜΜΑΤΑ", "Προγράμματα της ΔΥΠΑ για απασχόληση και κατάρτιση.", ["/programmata", "Όλα τα προγράμματα"], "prog-h")}
       <div class="cards">${programs.map(card).join("")}</div>
@@ -1111,6 +1179,91 @@ function viewList(params, mode) {
   render();
   if (isProg) setMeta({ title: "Προγράμματα ΔΥΠΑ, απασχόλησης και κατάρτισης | Επιδόματα Τώρα", desc: "Προγράμματα της ΔΥΠΑ, επιδοτούμενα προγράμματα απασχόλησης, κατάρτιση και κοινωνικά προγράμματα, με την επίσημη πηγή." });
   else setMeta({ title: "Επιδόματα: ποιοι δικαιούνται, ποσά, προθεσμίες | Επιδόματα Τώρα", desc: "Όλα τα επιδόματα με φίλτρα ανά κατηγορία, φορέα και κατάσταση. Δικαιούχοι, ποσά, προθεσμίες και επίσημη πηγή." });
+}
+
+
+async function viewDiscounts() {
+  const cats = await loadDiscounts();
+  const selected = { id: "", q: "" };
+
+  app.innerHTML = `<div class="wrap">
+    ${pageBanner({ img: "family", over: "ΕΚΠΤΩΣΕΙΣ & ΠΡΟΝΟΜΙΑ", title: "Εκπτώσεις και προνόμια", text: "Μαγαζιά και επιχειρήσεις που προσφέρουν προνόμια σε φοιτητές, ανέργους, τρίτεκνους, πολύτεκνους και ΑμεΑ." })}
+    <div class="trust" style="margin-top:16px">${ICON_CHECK}<div><b>Χρησιμοποίησέ το σαν οδηγό.</b> Οι προσφορές και οι όροι μπορούν να αλλάξουν από την επιχείρηση. Έλεγξε πάντα πριν από την αγορά ότι η παροχή ισχύει και τι δικαιολογητικό απαιτείται.<small>Τελευταία ενημέρωση αρχείου: ${esc(cats.length ? (document.querySelector('meta[name="discounts-updated"]')?.content || "02/10/2026") : "—")}</small></div></div>
+    <section class="section discount-intro">
+      <div class="discount-filters">
+        <label>Αναζήτηση<input id="discount-q" type="search" placeholder="π.χ. άνεργος, Starbucks, Σκλαβενίτης" autocomplete="off"></label>
+        <label>Κατηγορία<select id="discount-select"></select></label>
+      </div>
+      <div class="discount-cats" id="discount-cats" role="group" aria-label="Κατηγορίες προνομίων"></div>
+      <div class="discount-stats" id="discount-stats"></div>
+      <div class="result-note" id="discount-count" aria-live="polite"></div>
+      <div id="discount-body"></div>
+    </section>
+  </div>`;
+
+  // The JSON's top-level updated field is not part of category objects; expose it via data attribute below.
+  const updated = document.querySelector('meta[name="discounts-updated"]')?.content || "02/10/2026";
+  const select = document.getElementById("discount-select");
+  select.innerHTML = `<option value="">Όλες οι κατηγορίες</option>${cats.map(c => `<option value="${esc(c.id)}">${esc(c.icon)} ${esc(c.label)}</option>`).join("")}`;
+
+  const chips = document.getElementById("discount-cats");
+  chips.innerHTML = `<button class="discount-cat" type="button" data-discount-cat="" aria-pressed="true">Όλες</button>` +
+    cats.map(c => `<button class="discount-cat" type="button" data-discount-cat="${esc(c.id)}" aria-pressed="false">${esc(c.icon)} ${esc(c.label)}</button>`).join("");
+
+  const render = () => {
+    const q = norm(selected.q.trim());
+    const active = cats.filter(c => !selected.id || c.id === selected.id).map(c => ({
+      ...c,
+      groups: c.groups.map(g => ({
+        ...g,
+        rows: g.rows.filter(row => !q || norm(row.join(" ") + " " + c.label + " " + c.card + " " + c.apply).includes(q))
+      })).filter(g => g.rows.length)
+    })).filter(c => c.groups.length);
+
+    const total = discountTotal(active);
+    const allEligible = selected.id ? cats.filter(c => c.id === selected.id) : cats;
+    const allCount = discountTotal(allEligible);
+
+    document.getElementById("discount-count").textContent = total ? `${total} προνόμια εμφανίζονται` + (q ? ` για «${selected.q}»` : "") : "Δεν βρέθηκε προνόμιο με αυτά τα φίλτρα.";
+    document.getElementById("discount-stats").innerHTML = `
+      <div class="discount-stat"><b>${allCount}</b><span>καταχωρισμένα προνόμια${selected.id ? "" : " συνολικά"}</span></div>
+      <div class="discount-stat"><b>${active.length}</b><span>κατηγορίες</span></div>
+      <div class="discount-stat"><b>${esc(updated)}</b><span>ημερομηνία αρχείου</span></div>`;
+
+    document.querySelectorAll("[data-discount-cat]").forEach(b => b.setAttribute("aria-pressed", b.dataset.discountCat === selected.id));
+
+    if (!active.length) {
+      document.getElementById("discount-body").innerHTML = `<div class="empty discount-empty">Δεν βρέθηκε κάτι. Δοκίμασε άλλη λέξη ή επίλεξε «Όλες οι κατηγορίες».</div>`;
+      return;
+    }
+
+    document.getElementById("discount-body").innerHTML = `<div class="discount-groups">${
+      active.map(c => `<section>
+        <div class="sec-head" style="margin-top:28px"><div><span class="kicker"></span><h2>${esc(c.icon)} ${esc(c.label)}</h2><p>Κάρτα / προϋπόθεση: <b>${esc(c.card)}</b>${c.apply ? ` · ${esc(c.apply)}` : ""}</p></div></div>
+        ${c.groups.map(g => `<div class="discount-group">
+          <div class="discount-group-hd"><div><h3>${esc(g.title)}</h3><p>${g.rows.length} καταχωρίσεις</p></div></div>
+          <div class="discount-rows">
+            ${g.rows.map(row => `<div class="discount-row">
+              <div class="name">${esc(row[0])}</div>
+              <div class="off">${esc(row[1])}</div>
+              <div class="how">${esc(row[2])}</div>
+            </div>`).join("")}
+          </div>
+        </div>`).join("")}
+      </section>`).join("")
+    }</div>`;
+  };
+
+  document.getElementById("discount-q").addEventListener("input", e => { selected.q = e.target.value; render(); });
+  select.addEventListener("change", e => { selected.id = e.target.value; render(); });
+  app.onclick = e => {
+    const b = e.target.closest("[data-discount-cat]");
+    if (b) { selected.id = b.dataset.discountCat; select.value = selected.id; render(); }
+  };
+  app._rerender = render;
+  render();
+  setMeta({ title: "Εκπτώσεις και προνόμια για φοιτητές, ανέργους, οικογένειες και ΑμεΑ | Επιδόματα Τώρα",
+    desc: "Μαγαζιά και επιχειρήσεις με εκπτώσεις και προνόμια για φοιτητές, ανέργους, τρίτεκνους, πολύτεκνους και ΑμεΑ." });
 }
 
 function viewBenefit(slug) {
@@ -1425,13 +1578,13 @@ function setMeta({ title, desc, img, ld, noindex }) {
 /* ==========================================================
    Πλοήγηση με πραγματικά URLs (π.χ. /epidomata/epidoma-stegasis)
    ========================================================== */
-const NAV = [["/", "Αρχική"], ["/anakoinoseis", "Ανακοινώσεις"], ["/epidomata", "Επιδόματα"], ["/syntaxeis", "Συντάξεις"], ["/pliromes", "Πληρωμές"], ["/programmata", "Προγράμματα"], ["/syxnes-erotiseis", "Ερωτήσεις"]];
+const NAV = [["/", "Αρχική"], ["/anakoinoseis", "Ανακοινώσεις"], ["/epidomata", "Επιδόματα"], ["/ekptoseis", "Εκπτώσεις & προνόμια"], ["/syntaxeis", "Συντάξεις"], ["/pliromes", "Πληρωμές"], ["/programmata", "Προγράμματα"], ["/syxnes-erotiseis", "Ερωτήσεις"]];
 const navHTML = () => NAV.map(([h, l]) => `<a href="${h}" data-link>${l}</a>`).join("");
 document.getElementById("nav-main").innerHTML = navHTML();
 document.getElementById("nav-mobile").innerHTML = navHTML();
 
 /* Παλιοί σύνδεσμοι με # (π.χ. από βίντεο στο TikTok) */
-const LEGACY = { arxiki: "/", anakoinoseis: "/anakoinoseis", syntaxeis: "/syntaxeis", prothesmies: "/pliromes", sxetika: "/sxetika" };
+const LEGACY = { arxiki: "/", anakoinoseis: "/anakoinoseis", syntaxeis: "/syntaxeis", prothesmies: "/pliromes", sxetika: "/sxetika", ekptoseis: "/ekptoseis" };
 function legacyRedirect() {
   const h = location.hash.replace("#", "");
   if (!h) return;
@@ -1453,6 +1606,7 @@ function route() {
   else if (seg[0] === "programmata") viewList(params, "programmata");
   else if (seg[0] === "anakoinoseis") viewAnn(params);
   else if (seg[0] === "syntaxeis") viewSyn(params);
+   else if (seg[0] === "ekptoseis") viewDiscounts();
   else if (seg[0] === "pliromes") viewDates();
   else if (seg[0] === "piges") viewSources();
   else if (seg[0] === "syxnes-erotiseis") viewFaq();
