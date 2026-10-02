@@ -1,0 +1,50 @@
+name: Discount Monitor
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: discount-monitor
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TZ: Europe/Athens
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - run: pip install requests beautifulsoup4
+
+      - name: Write secret files
+        env:
+          TELEGRAM_TXT: ${{ secrets.TELEGRAM_TXT }}
+        run: |
+          [ -n "$TELEGRAM_TXT" ] && printf '%s\n' "$TELEGRAM_TXT" > telegram.txt
+          true
+
+      - name: Run Discount Monitor
+        run: python discount_monitor.py
+
+      - name: Save state
+        run: |
+          git config user.name "govwatch-bot"
+          git config user.email "govwatch-bot@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "discount hashes $(date +'%Y-%m-%d %H:%M')"
+            git pull --rebase -q || true
+            git push
+          fi
