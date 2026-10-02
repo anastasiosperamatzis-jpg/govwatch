@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /anazitisi
+
+Sitemap: https://epidomatatora.gr/sitemap.xml
