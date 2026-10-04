@@ -684,7 +684,7 @@ OLD_URL = "https://epidomata-tora.netlify.app"
 # Όταν συνδεθεί το domain, αλλάζει μόνο αυτό (π.χ. "https://epidomatatora.gr")
 SITE_URL = "https://epidomatatora.gr"
 MIN_DEPLOY_GAP = 60 * 60  # το πολύ ένα ανέβασμα την ώρα (εκτός από «python monitor.py publish»)
-SKIP_FILES = {"_redirects", "_headers", "_routes.json", ".DS_Store", "Thumbs.db", "desktop.ini"}
+SKIP_FILES = {"_headers", "_routes.json", ".DS_Store", "Thumbs.db", "desktop.ini"}
 
 
 def cf_config():
