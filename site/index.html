@@ -1680,6 +1680,8 @@ fetch("/anakoinoseis.json", { cache: "no-store" })
   .then(r => r.ok ? r.json() : [])
   .then(list => {
     if (!Array.isArray(list) || !list.length) return;
+   const latest = list.map(a => a?.date).filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort().pop();
+if (latest) ENIMEROSI = latest;
     const seen = new Set(ANAKOINOSEIS.map(a => a.url));
     list.forEach(a => {
       if (!a || !a.title || !/^\d{4}-\d{2}-\d{2}$/.test(a.date || "") || seen.has(a.url)) return;
