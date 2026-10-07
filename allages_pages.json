@@ -1,1 +1,34 @@
-[]
+[
+ {
+  "name": "ΟΠΕΚΑ — Επίδομα Παιδιού Α21",
+  "url": "https://opeka.gov.gr/oikogeneia/epidoma-paidiou-a21/"
+ },
+ {
+  "name": "ΟΠΕΚΑ — Επίδομα Στέγασης",
+  "url": "https://opeka.gov.gr/stegasi/epidoma-stegasis/"
+ },
+ {
+  "name": "ΟΠΕΚΑ — Ελάχιστο Εγγυημένο Εισόδημα",
+  "url": "https://opeka.gov.gr/elachisto-engyimeno-eisodima/"
+ },
+ {
+  "name": "ΟΠΕΚΑ — Επίδομα Γέννησης",
+  "url": "https://opeka.gov.gr/oikogeneia/epidoma-gennisis/"
+ },
+ {
+  "name": "ΟΠΕΚΑ — Αναπηρικά Επιδόματα",
+  "url": "https://opeka.gov.gr/atoma-me-anapiria/anapirika-epidomata/"
+ },
+ {
+  "name": "ΟΠΕΚΑ — Ανακοινώσεις/Δελτία Τύπου",
+  "url": "https://opeka.gov.gr/category/anakoinoseis-deltia-typou/"
+ },
+ {
+  "name": "e-ΕΦΚΑ — Δελτία Τύπου",
+  "url": "https://www.e-efka.gov.gr/el/deltia-typoy"
+ },
+ {
+  "name": "e-ΕΦΚΑ — Ανακοινώσεις",
+  "url": "https://www.e-efka.gov.gr/el/anakoinoseis"
+ }
+]
