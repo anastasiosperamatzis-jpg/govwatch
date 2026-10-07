@@ -157,7 +157,7 @@ def today():
 
 
 # ---------- Κοινή λογική για Bot Προθεσμιών & Bot Πληρωμών ----------
-def scan_and_notify(table, datecol, emoji, label, kw_re, near_kw=None, now=None, seen_path=SEEN, reg=None, send=send_telegram):
+def scan_and_notify(table, datecol, emoji, label, kw_re, near_kw=None, exclude_near=None, now=None, seen_path=SEEN, reg=None, send=send_telegram):
     """Διαβάζει νέα items από το seen.db, εξάγει ημερομηνίες, γράφει στο registry και ειδοποιεί.
     near_kw: αν δοθεί, η ημερομηνία πρέπει να είναι ≤60 χαρακτήρες μετά από αυτή τη λέξη-κλειδί."""
     import dedupe
@@ -180,6 +180,8 @@ def scan_and_notify(table, datecol, emoji, label, kw_re, near_kw=None, now=None,
         ref = dt.datetime.fromisoformat(fs[:19]).date() if fs and fs[:4] > "2000" else now.date()
         pick = None
         for day, pos in find_dates(title, ref):
+            if exclude_near and any(0 <= pos - m2.end() <= 25 for m2 in exclude_near.finditer(nt)):
+                continue
             if near_kw:
                 m = None
                 for m in near_kw.finditer(nt):
@@ -191,6 +193,10 @@ def scan_and_notify(table, datecol, emoji, label, kw_re, near_kw=None, now=None,
         if not pick or pick < now.date() - dt.timedelta(days=1) or pick > now.date() + dt.timedelta(days=400):
             continue
         stage = 0 if fs >= fresh_limit else 1
+        # ίδιο γεγονός (ίδια μέρα, παρόμοιος τίτλος) από άλλο site/άλλη ονομασία = διπλότυπο
+        if any(similarity(title, r[0]) >= 0.4 for r in
+               reg.execute(f"SELECT title FROM {table} WHERE {datecol}=?", (pick.isoformat(),))):
+            continue
         cur = reg.execute(f"INSERT OR IGNORE INTO {table}(benefit,{datecol},title,url,source,first_seen,stage) VALUES(?,?,?,?,?,?,?)",
                           (benefit_name(title), pick.isoformat(), clean_title(title), url, source, fs, stage))
         added += cur.rowcount

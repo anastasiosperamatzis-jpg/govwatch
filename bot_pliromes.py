@@ -4,9 +4,11 @@ import registry_db as R
 
 KW = re.compile(r"πληρωμ|καταβαλλ|πιστωνεται|πιστωση|πληρωνεται|πληρωνονται|καταβολη")
 
+NOT_PAY = re.compile(r"μεχρι|εως|προθεσμι|αιτησ\w*|ληγει")
+
 
 def main():
-    return R.scan_and_notify("payments", "pay_date", "💶", "Πληρωμές", KW)
+    return R.scan_and_notify("payments", "pay_date", "💶", "Πληρωμές", KW, exclude_near=NOT_PAY)
 
 
 if __name__ == "__main__":
