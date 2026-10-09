@@ -36,3 +36,5 @@
   https://news.google.com/rss/articles/CBMijAFBVV95cUxOVXN4VC15WkFEOG04cDVLSVJISXdFOFlWb3Bzc0NxbVBQVUZGaXpkYlB6dDlXa3BlR0pTSjdlaGUxSlNwNTNYMmg2dmlFNW5wVWdaN21OQ3I4ekJlclFvN3JfRlNxX1NfU01LTzNNRzZZTk5HOFpqZWJZaDlqaGwwb1FJSnZXVmJKTzBreg?oc=5
 - 09/10/2026 12:44 · **Ειδήσεις: ΔΕΗ** · » Το Σωματείο Συνταξιούχων ΔΕΗ ενημερώνουν για τις πληρωμές των αναδρομικών - kozan.gr
   https://news.google.com/rss/articles/CBMiR0FVX3lxTE92dURVTXAxS0U4ajRSNzNRdVJsSl9OeElaUExVOEVIdGQxNi1uRmRXNDItQXFvTVh2WTBBSEVhc0ViNG90SW5R?oc=5
+- 09/10/2026 16:02 · **e-ΕΦΚΑ Εγκύκλιοι** · 09 Οκτ 2026 Αναγνωρίσεις Χρόνου Ασφάλισης Μη Μισθωτών του e - Ε.Φ.Κ.Α. - Ενεργοποίηση νέων ψηφιακών λειτουργιών Teaser Description Αναγνωρίσεις Χρόνου Ασφάλισης Μη Μισθωτών του e - ΕΦΚΑ - Ενεργοποίηση νέων ψηφιακών λειτουργιών
+  https://www.e-efka.gov.gr/el/egkyklioi-kai-genika-eggrafa/anagnoriseis-hronoy-asfalisis-mi-misthoton-toy-e-efka-energopoiisi
