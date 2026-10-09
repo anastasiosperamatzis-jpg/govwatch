@@ -42,3 +42,5 @@
   https://www.moh.gov.gr/articles/health/dieythynsh-prwtobathmias-frontidas-ygeias/draseis-kai-programmata-agwghs-ygeias/parembash-pleiades-gia-paidia-efhboys-neoys-me-anaphria
 - 09/10/2026 18:10 · **Ειδήσεις: Εφορία** · Συντάξεις: Πώς η εφορία "ψαλιδίζει" την αύξηση 2,8% - Thestival
   https://news.google.com/rss/articles/CBMiiAFBVV95cUxQb2hWMUJ3akpRbGpDQlc0X2NHRWY0QXYzUnVJSnNkR1Y3WGNQRnBtSFZKRzlZcy1zRXFMSmctZ19xNWRZLUQ1S2NoVzRLU0hJX3NPTHp0SHk4a3VOdTlVbzNtQVBVSG1ZNnhRYXpydHhXSk1ndDJlZWlIb0lQRENjQjJNWWZUNDdW?oc=5
+- 09/10/2026 23:14 · **Ειδήσεις: Εφορία** · Αποζημιώσεις για φυσικές καταστροφές: Από «κόσκινο» θα περνούν τα στοιχεία από ΑΑΔΕ, ΕΛΓΑ και ασφαλιστικές - kontranews.gr
+  https://news.google.com/rss/articles/CBMi2AFBVV95cUxNYmVkZ0NGUTNpQ05qbVN4SnZhSXBnTm1hTzdQbUUxTlpwZTl0eEloaTRoTEl3T0RMZFRMR2tBS1hWTzdnRFhyWm1vRWpGemZoRWc5VDhCOVR1X016R0hieThBMVJ3ZUp4WTMzMzBZbEhQclRLVFdyQk9OdWdGLWVTNHR0dElVV3h5dDhET1NSZEFrQVFLc25sWVJ2SjdMZy1tVEJKXzlYX243RU1YNkFJMUZTT1kwUFdQMUR0bG9IaWFyRzNSRmdPTGc4WDlpZ3VscXlydGV6cXA?oc=5
