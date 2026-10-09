@@ -38,3 +38,7 @@
   https://news.google.com/rss/articles/CBMiR0FVX3lxTE92dURVTXAxS0U4ajRSNzNRdVJsSl9OeElaUExVOEVIdGQxNi1uRmRXNDItQXFvTVh2WTBBSEVhc0ViNG90SW5R?oc=5
 - 09/10/2026 16:02 · **e-ΕΦΚΑ Εγκύκλιοι** · 09 Οκτ 2026 Αναγνωρίσεις Χρόνου Ασφάλισης Μη Μισθωτών του e - Ε.Φ.Κ.Α. - Ενεργοποίηση νέων ψηφιακών λειτουργιών Teaser Description Αναγνωρίσεις Χρόνου Ασφάλισης Μη Μισθωτών του e - ΕΦΚΑ - Ενεργοποίηση νέων ψηφιακών λειτουργιών
   https://www.e-efka.gov.gr/el/egkyklioi-kai-genika-eggrafa/anagnoriseis-hronoy-asfalisis-mi-misthoton-toy-e-efka-energopoiisi
+- 09/10/2026 18:10 · **Υπουργείο Υγείας** · Παρέμβαση ΠΛΕΙΑΔΕΣ - για παιδιά, Έφηβους , Νέους με αναπηρία
+  https://www.moh.gov.gr/articles/health/dieythynsh-prwtobathmias-frontidas-ygeias/draseis-kai-programmata-agwghs-ygeias/parembash-pleiades-gia-paidia-efhboys-neoys-me-anaphria
+- 09/10/2026 18:10 · **Ειδήσεις: Εφορία** · Συντάξεις: Πώς η εφορία "ψαλιδίζει" την αύξηση 2,8% - Thestival
+  https://news.google.com/rss/articles/CBMiiAFBVV95cUxQb2hWMUJ3akpRbGpDQlc0X2NHRWY0QXYzUnVJSnNkR1Y3WGNQRnBtSFZKRzlZcy1zRXFMSmctZ19xNWRZLUQ1S2NoVzRLU0hJX3NPTHp0SHk4a3VOdTlVbzNtQVBVSG1ZNnhRYXpydHhXSk1ndDJlZWlIb0lQRENjQjJNWWZUNDdW?oc=5
