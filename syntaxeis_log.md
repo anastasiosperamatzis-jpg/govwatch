@@ -86,3 +86,5 @@
   https://news.google.com/rss/articles/CBMipgFBVV95cUxPbkN1NGVJdUFjMTFDcnktUnlVUlhEVzBWOEpvdE1Wem5iMURzYzZ2MkFaLURfMDlDRTYzU1p6UHdiSHNlUndRSHNYcGx5Z3liT08wX3JfR1lmUkU3MHRkLTV1YnpnTUoxREswMTFwcHdtMmNpT2ljM1c0TkwtcFFNNHlHc3B5UHNDZ0ozYzBleUJVbWJ6YXFUODBwVjh1QWU2eldFcXJB?oc=5
 - 11/10/2026 10:10 · **Ειδήσεις: Εφορία** · Ο… χαμηλοσυνταξιούχος Καρβέλας, το επεισόδιο με την ΑΑΔΕ και το δάνειο του Κούστα - Googlareis.gr
   https://news.google.com/rss/articles/CBMiugFBVV95cUxQSXZvZlJ5VFZzYWV3M0VYaTQ1SS1vX2VLUkowSXBpZzc4OHJyMTAtNUpWbDhGRi1DZGVyTU15SFV3bXphZkNfNld2bE41a01yZkpOeDJiUnFkZFk5TGxteGVzdUx5UVdQSjlRYzcwMTlnRVZEai1JRzQ2bzR4U29LZnBzZ19PQklpUVMyTlQ1SEhzeHBKZFVndHBGNWdBZ19INklBam11Wk14cnM5ZTRjRnhQQkVHY21FbEE?oc=5
+- 11/10/2026 16:42 · **Ειδήσεις: Εφορία** · Ο χαμηλοσυνταξιούχος Καρβέλας, η «πόρτα» στην ΑΑΔΕ και η απαίτηση Κούστα για το δάνειο εκατομμυρίου - SDNA
+  https://news.google.com/rss/articles/CBMiswFBVV95cUxPQWZJU2xtWEZJYVE4dk9LVmE1M3ctRnVLTU5kbndaTlVUQkhrWGdBb3doREJHZWczbHBoZ3cwNFF2c2RTWDdHS1lwRjdQcXQ1d0JwMFdReU5tMnoyVDJmUlFRdktJYXQyQXZTS3UtYXZOSmQ0UmVPM0pDZDVZcVZ2LUpqVFphZllYTlNHUC1Kd19ZY2xEQ29SeVg5LS0zNlZsX093d1d4alV5OTdoX0J4TnZkNA?oc=5
