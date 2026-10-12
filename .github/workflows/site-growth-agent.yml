@@ -1,0 +1,52 @@
+name: Site Growth Agent (Agent 2)
+
+on:
+  schedule:
+    - cron: '0 5 * * *'   # 08:00 Αθήνα (UTC+3) — μετά το πρωινό batch ανακοινώσεων
+  workflow_dispatch:
+
+concurrency:
+  group: govwatch
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TZ: Europe/Athens
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Write secret files
+        env:
+          TELEGRAM_TXT: ${{ secrets.TELEGRAM_TXT }}
+          CLOUDFLARE_TXT: ${{ secrets.CLOUDFLARE_TXT }}
+        run: |
+          [ -n "$TELEGRAM_TXT" ] && printf '%s\n' "$TELEGRAM_TXT" > telegram.txt
+          [ -n "$CLOUDFLARE_TXT" ] && printf '%s\n' "$CLOUDFLARE_TXT" > cloudflare.txt
+          true
+
+      - name: Run Site Growth Agent (build pages + deploy + Telegram report)
+        run: python site_growth_agent.py
+
+      - name: Save state (manual.json, νέες σελίδες, log)
+        run: |
+          git config user.name "site-growth-agent"
+          git config user.email "site-growth-agent@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "Agent 2: site growth update $(date +'%Y-%m-%d %H:%M')"
+            git pull --rebase -q || true
+            git push
+          fi
