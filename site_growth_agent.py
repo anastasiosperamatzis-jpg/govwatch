@@ -1,26 +1,33 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Agent 2 — Site Growth Agent (πρώτη έκδοση / MVP)
+Agent 2 — Site Growth Agent (v2 — διορθωμένη έκδοση μετά από έλεγχο)
 
 Σκοπός: να «μεγαλώνει» μόνο του το epidomatatora.gr, χωρίς χειροκίνητη δουλειά.
 
 Τι κάνει σε κάθε εκτέλεση:
   1. Διαβάζει το site/anakoinoseis.json (τις ήδη επαληθευμένες ανακοινώσεις του GovWatch).
   2. Ομαδοποιεί τις ανακοινώσεις σε «θεματικούς κόμβους» (π.χ. Πληρωμές ΔΥΠΑ/e-ΕΦΚΑ,
-     Συντάξεις, Επίδομα Παιδιού Α21, Ρυθμίσεις οφειλών) — θέματα που ήδη αποδεδειγμένα
-     φέρνουν θέαση (βλ. registry.db) αλλά δεν έχουν ακόμη μία μόνιμη σελίδα-κόμβο στο site.
+     Συντάξεις, Επίδομα Παιδιού Α21, Ρυθμίσεις οφειλών) με ΑΥΣΤΗΡΟ φιλτράρισμα στον
+     ΤΙΤΛΟ (βλ. match_theme), όχι σε ολόκληρο το κείμενο.
   3. Φτιάχνει/ανανεώνει μία SEO landing page ανά θέμα, που απλώς παραθέτει (όχι εφευρίσκει)
-     τις πραγματικές, ήδη ελεγμένες ανακοινώσεις — άρα καμία πληροφορία δεν «εφευρίσκεται».
-  4. Ενημερώνει το manual.json ώστε η σελίδα να μπει στο site.
-  5. Καλεί monitor.py publish για να ανέβει το site ΑΜΕΣΩΣ (Cloudflare Pages).
-  6. Γράφει σύντομη αναφορά στο site_growth_log.md και (αν υπάρχει telegram.txt) στο Telegram.
+     τις πραγματικές, ήδη ελεγμένες ανακοινώσεις.
+  4. Πριν αλλάξει μια υπάρχουσα σελίδα, κρατάει αντίγραφο ασφαλείας σε agent2_backups/
+     (εκτός site/, άρα ΔΕΝ δημοσιεύεται ποτέ).
+  5. Ενημερώνει το manual.json — ΜΟΝΟ τις 4 δικές του εγγραφές (ποτέ άλλη ανακοίνωση).
+  6. Καλεί monitor.py publish και ΕΠΙΒΕΒΑΙΩΝΕΙ πραγματικό deploy πριν δηλώσει επιτυχία
+     (βλ. deploy()) — δεν εμπιστεύεται μόνο τον exit code, γιατί το monitor.py πάντα
+     επιστρέφει 0.
+  7. Γράφει ποια ΔΙΚΑ ΤΟΥ αρχεία άλλαξε σε .agent2_changed_files.txt, ώστε το git add
+     στο workflow να περιορίζεται σε αυτά — ποτέ `git add -A`.
+  8. Γράφει σύντομη αναφορά στο site_growth_log.md και (αν υπάρχει telegram.txt) στο Telegram.
 
 Σχεδιασμένο να τρέχει μόνο του, 1 φορά τη μέρα, μέσα από GitHub Actions
-(.github/workflows/site-growth-agent.yml) — καμία χειροκίνητη ενέργεια.
+(.github/workflows/site-growth-agent.yml).
 """
 import json
 import os
+import re
 import subprocess
 import sys
 import unicodedata
@@ -31,14 +38,32 @@ SITE = os.path.join(HERE, "site")
 MANUAL = os.path.join(HERE, "manual.json")
 FEED = os.path.join(SITE, "anakoinoseis.json")
 LOG = os.path.join(HERE, "site_growth_log.md")
+BACKUPS = os.path.join(HERE, "agent2_backups")   # ΕΚΤΟΣ site/ — ποτέ δεν δημοσιεύεται
+CHANGED_FILES_MANIFEST = os.path.join(HERE, ".agent2_changed_files.txt")
 SITE_URL = "https://epidomatatora.gr"
 
 MAX_ITEMS_PER_PAGE = 30
 MIN_ITEMS_TO_PUBLISH = 2   # κάτω από αυτό δεν αξίζει ακόμη δική του σελίδα
 
 # ---------------------------------------------------------------------------
+# Λέξεις/φράσεις που αποκλείουν ΑΜΕΣΩΣ μια ανακοίνωση, όποιο θέμα κι αν ταιριάζει
+# «τυχαία» (κληρώσεις επιτροπών, σχολικά γεύματα, κ.λπ. — βλ. test_site_growth_agent.py)
+# ---------------------------------------------------------------------------
+EXCLUDE_PATTERNS = [
+    "κληρωσ",            # κληρώσεις επιτροπών/διαγωνισμών — άσχετο με επιδόματα
+    "σχολικ γευμ",        # πρόγραμμα σχολικών γευμάτων
+    "αντιπλημμυρικ",      # έργα ΕΣΠΑ κ.ά. γενικά νέα υποδομών
+]
+
+# ---------------------------------------------------------------------------
 # Θεματικοί κόμβοι: κάθε ένας γίνεται μία SEO σελίδα.
-# Τα keywords ταιριάζουν με τίτλους/κείμενο ανακοινώσεων ήδη ελεγμένων από το GovWatch.
+#
+# Λογική ταιριάσματος (βλ. match_theme): ΜΟΝΟ στον τίτλο (όχι στο ελεύθερο κείμενο,
+# που έβαζε μέσα άσχετες ανακοινώσεις). Ένα θέμα «περνάει» αν:
+#   (α) ο τίτλος περιέχει μία ΕΙΔΙΚΗ/μη διφορούμενη φράση (strong_title) — αρκεί μόνη
+#       της, ακόμη κι αν δεν αναφέρεται φορέας (π.χ. "Α21", "συνταξ", "120 δοσ"), ή
+#   (β) ο τίτλος περιέχει ΤΑΥΤΟΧΡΟΝΑ έναν σχετικό φορέα (agency_terms) ΚΑΙ έναν
+#       όρο-θέμα (topic_terms) — συνδυασμός, όχι μία μόνη γενική λέξη.
 # ---------------------------------------------------------------------------
 THEMES = [
     {
@@ -47,7 +72,9 @@ THEMES = [
         "nav": "Πληρωμές ΔΥΠΑ & e-ΕΦΚΑ",
         "h1": "Πληρωμές ΔΥΠΑ & e-ΕΦΚΑ — Ημερολόγιο Πληρωμών",
         "desc": "Όλες οι ανακοινωμένες πληρωμές ΔΥΠΑ και e-ΕΦΚΑ (επιδόματα, παροχές, επιστροφές), με ημερομηνία και επίσημη πηγή. Ενημερώνεται αυτόματα.",
-        "keywords": ["δυπα", "εφκα", "πληρωμ", "λογαριασμ", "καταβαλ"],
+        "strong_title": [],  # καμία αφ' εαυτής αρκετή — πάντα θέλει τον συνδυασμό (β)
+        "agency_terms": ["δυπα", "εφκα"],
+        "topic_terms": ["πληρωμ", "λογαριασμ", "καταβολ", "καταβαλ"],
     },
     {
         "slug": "syntaxeis-pliromes",
@@ -55,7 +82,9 @@ THEMES = [
         "nav": "Συντάξεις — Ημερομηνίες Πληρωμών",
         "h1": "Συντάξεις: Ημερομηνίες Πληρωμών",
         "desc": "Ανακοινώσεις e-ΕΦΚΑ για το πότε πληρώνονται οι συντάξεις κάθε μήνα, με επίσημη πηγή. Ενημερώνεται αυτόματα.",
-        "keywords": ["συνταξ", "συνταξιουχ"],
+        "strong_title": ["συνταξ"],  # αρκεί μόνη της — αδιαμφισβήτητα το θέμα, ακόμη κι αν λείπει «e-ΕΦΚΑ» από τον τίτλο
+        "agency_terms": ["εφκα"],
+        "topic_terms": ["πληρωμ", "ημερομην"],
     },
     {
         "slug": "epidoma-paidiou-a21",
@@ -63,7 +92,9 @@ THEMES = [
         "nav": "Επίδομα Παιδιού (Α21)",
         "h1": "Επίδομα Παιδιού Α21 — Νέα & Ανακοινώσεις",
         "desc": "Όλες οι επίσημες ανακοινώσεις ΟΠΕΚΑ για το Επίδομα Παιδιού Α21: αιτήσεις, πληρωμές, προθεσμίες. Ενημερώνεται αυτόματα.",
-        "keywords": ["α21", "επιδομα παιδιου", "οπεκα"],
+        "strong_title": ["α21", "επιδομα παιδιου"],
+        "agency_terms": ["οπεκα"],
+        "topic_terms": ["αιτησ", "πληρωμ", "προθεσμ"],
     },
     {
         "slug": "rythmisi-ofeilon",
@@ -71,9 +102,17 @@ THEMES = [
         "nav": "Ρύθμιση Οφειλών (Εφορία / Ταμεία)",
         "h1": "Ρύθμιση Οφειλών σε Εφορία & Ασφαλιστικά Ταμεία",
         "desc": "Ανακοινώσεις για ρυθμίσεις χρεών (δόσεις) σε Εφορία, e-ΕΦΚΑ και ασφαλιστικά ταμεία, με επίσημη πηγή. Ενημερώνεται αυτόματα.",
-        "keywords": ["ρυθμισ", "δοσ", "οφειλ", "χρε", "myaade"],
+        # «120 δόσεις» / «72 δόσεις» είναι συγκεκριμένο, αναγνωρίσιμο πρόγραμμα — αρκεί μόνο
+        # του, ακόμη κι αν ο τίτλος (π.χ. δήλωση υπουργού) δεν επαναλαμβάνει «Εφορία».
+        "strong_title": ["120 δοσ", "72 δοσ", "ρυθμιση οφειλων"],
+        "agency_terms": ["εφορια", "αααδε", "ασφαλιστικ", "myaade"],
+        "topic_terms": ["ρυθμισ", "δοσεις", "δοσεων", "οφειλ"],
     },
 ]
+
+# Το ΜΟΝΑΔΙΚΟ σύνολο URLs που επιτρέπεται στον Agent 2 να δημιουργήσει/αλλάξει μέσα
+# στο manual.json — καμία άλλη εγγραφή (χειροκίνητη ή άλλου bot) δεν αγγίζεται ποτέ.
+AGENT2_URLS = {f"/{t['slug']}.html" for t in THEMES}
 
 
 def norm(s):
@@ -104,9 +143,44 @@ def save_manual(items):
         f.write("\n")
 
 
+def _words(title):
+    """Λέξεις του τίτλου (ήδη normalized), χωρίς σημεία στίξης."""
+    return re.findall(r"[a-zα-ω0-9]+", title)
+
+
+def _term_matches(term, title, words):
+    """Ένας όρος ταιριάζει είτε ως ΑΡΧΗ μιας ολόκληρης λέξης (π.χ. 'πληρωμ' ταιριάζει
+    στο 'πληρωμών' αλλά ΟΧΙ μέσα στο 'συμπληρωματική' — stem, όχι τυχαίο substring),
+    είτε, για πολυλεκτικές φράσεις (έχουν κενό, π.χ. '120 δοσ'), ως substring σε
+    ολόκληρο τον τίτλο."""
+    if " " in term:
+        return term in title
+    return any(w.startswith(term) for w in words)
+
+
 def match_theme(item, theme):
-    hay = norm((item.get("title") or "") + " " + (item.get("text") or ""))
-    return any(kw in hay for kw in theme["keywords"])
+    """Αυστηρό ταίριασμα — ΜΟΝΟ στον τίτλο (όχι στο ελεύθερο κείμενο).
+
+    Περνάει αν:
+      (α) ο τίτλος περιέχει μία ειδική φράση (strong_title) — αρκεί μόνη της, ή
+      (β) ο τίτλος περιέχει ΚΑΙ φορέα (agency_terms) ΚΑΙ όρο-θέμα (topic_terms).
+    Κάθε όρος ταιριάζει μόνο ως αρχή λέξης (βλ. _term_matches), ώστε λέξεις όπως
+    «ΣΥΜπληρωματική» να ΜΗΝ ενεργοποιούν το keyword «πληρωμ».
+    Πρώτα ελέγχονται τα EXCLUDE_PATTERNS — αν ταιριάξουν, απορρίπτεται αμέσως,
+    ό,τι κι αν λέει το υπόλοιπο.
+    """
+    title = norm(item.get("title") or "")
+    words = _words(title)
+
+    if any(_term_matches(bad, title, words) for bad in EXCLUDE_PATTERNS):
+        return False
+
+    if any(_term_matches(phrase, title, words) for phrase in theme["strong_title"]):
+        return True
+
+    has_agency = any(_term_matches(a, title, words) for a in theme["agency_terms"])
+    has_topic = any(_term_matches(t, title, words) for t in theme["topic_terms"])
+    return has_agency and has_topic
 
 
 def esc(s):
@@ -233,9 +307,27 @@ footer a {{ color:var(--muted); }}
 """
 
 
+def backup_page(slug):
+    """Αντίγραφο ασφαλείας ΠΡΙΝ αλλάξει μια υπάρχουσα σελίδα — σε φάκελο ΕΚΤΟΣ site/,
+    ώστε να μην δημοσιεύεται ποτέ κατά λάθος στο live site."""
+    path = os.path.join(SITE, f"{slug}.html")
+    if not os.path.exists(path):
+        return None
+    os.makedirs(BACKUPS, exist_ok=True)
+    ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    backup_path = os.path.join(BACKUPS, f"{slug}.{ts}.html")
+    with open(path, encoding="utf-8") as src, open(backup_path, "w", encoding="utf-8") as dst:
+        dst.write(src.read())
+    return backup_path
+
+
 def upsert_manual(theme, n_items):
-    items = load_manual()
+    """Προσθέτει/ενημερώνει ΜΟΝΟ τη δική του εγγραφή (url στο AGENT2_URLS).
+    Ποτέ δεν αγγίζει εγγραφή που δεν του ανήκει."""
     url = f"/{theme['slug']}.html"
+    assert url in AGENT2_URLS, f"BUG: ο Agent 2 προσπάθησε να γράψει URL εκτός του δικού του scope: {url}"
+
+    items = load_manual()
     today = datetime.now().strftime("%Y-%m-%d")
     entry = {
         "date": today,
@@ -259,40 +351,56 @@ def upsert_manual(theme, n_items):
 
 def run():
     feed = load_feed()
+    # Εξαίρεση των ΔΙΚΩΝ ΤΟΥ σελίδων από τα υποψήφια items: αλλιώς, από τη στιγμή που
+    # μια θεματική σελίδα μπει στο manual.json (άρα και στο anakoinoseis.json), ο
+    # επόμενος κύκλος θα την έβρισκε ξανά ως «ανακοίνωση» και θα αυτο-αναφερόταν
+    # (ή, χειρότερα, θα «μόλυνε» ΑΛΛΟ θέμα — π.χ. ο τίτλος της σελίδας ΔΥΠΑ περιέχει
+    # «ΕΦΚΑ»+«Πληρωμών» και ταίριαζε λανθασμένα και στη σελίδα Συντάξεων).
+    feed = [it for it in feed if it.get("url") not in AGENT2_URLS]
     if not feed:
         print("[!] Δεν βρέθηκε/άδειο το site/anakoinoseis.json — τίποτα να επεξεργαστώ.")
-        return []
+        return [], []
 
     report_lines = [f"## Agent 2 — Site Growth · {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}"]
     touched = []
+    changed_files = set()
 
     for theme in THEMES:
         matches = [it for it in feed if match_theme(it, theme)]
         matches.sort(key=lambda it: it.get("date", ""), reverse=True)
         if len(matches) < MIN_ITEMS_TO_PUBLISH:
             continue
+
+        existed = os.path.exists(os.path.join(SITE, f"{theme['slug']}.html"))
+        if existed:
+            backup_page(theme["slug"])  # ασφάλεια πριν την αλλαγή
+
         html = build_page_html(theme, matches)
         path = os.path.join(SITE, f"{theme['slug']}.html")
-        existed = os.path.exists(path)
         with open(path, "w", encoding="utf-8") as f:
             f.write(html)
+        changed_files.add(os.path.relpath(path, HERE))
+
         action = upsert_manual(theme, len(matches))
+        changed_files.add(os.path.relpath(MANUAL, HERE))
+
         touched.append((theme, len(matches), action))
         verb = "Ανανεώθηκε" if existed else "✨ Δημιουργήθηκε νέα σελίδα"
         report_lines.append(f"- {verb}: **{theme['nav']}** — {len(matches)} ανακοινώσεις — /{theme['slug']}.html")
 
     if not touched:
-        report_lines.append("- Καμία αλλαγή (δεν υπήρχαν αρκετές νέες ανακοινώσεις ανά θέμα).")
+        report_lines.append("- Καμία αλλαγή (δεν υπήρχαν αρκετές έγκυρες ανακοινώσεις ανά θέμα).")
 
     report = "\n".join(report_lines) + "\n"
     print(report)
     with open(LOG, "a", encoding="utf-8") as f:
         f.write("\n" + report)
+    changed_files.add(os.path.relpath(LOG, HERE))
 
-    return touched
+    return touched, sorted(changed_files)
 
 
-def notify_telegram(touched):
+def notify_telegram(touched, deploy_ok, backend, error_detail=None):
     token, chat = None, None
     path = os.path.join(HERE, "telegram.txt")
     if os.path.exists(path):
@@ -306,14 +414,17 @@ def notify_telegram(touched):
     chat = os.getenv("TELEGRAM_CHAT_ID", chat)
     if not (token and chat):
         return
-    if not touched:
-        return
+
     try:
         import requests
-        lines = ["🌱 Agent 2 (Site Growth) ενημέρωσε το site:"]
-        for theme, n, action in touched:
-            verb = "νέα σελίδα" if action == "created" else "ανανεώθηκε"
-            lines.append(f"• {theme['nav']} — {verb} ({n} ανακοινώσεις)")
+        if deploy_ok:
+            lines = [f"🌱 Agent 2 (Site Growth) ενημέρωσε το site ({backend}):"]
+            for theme, n, action in touched:
+                verb = "νέα σελίδα" if action == "created" else "ανανεώθηκε"
+                lines.append(f"• {theme['nav']} — {verb} ({n} ανακοινώσεις)")
+        else:
+            lines = [f"⚠️ Agent 2 (Site Growth): ΑΠΕΤΥΧΕ το deploy ({backend}). "
+                     f"Οι σελίδες ΔΕΝ ανέβηκαν live. Λεπτομέρειες: {(error_detail or '')[:300]}"]
         requests.post(f"https://api.telegram.org/bot{token}/sendMessage",
                       data={"chat_id": chat, "text": "\n".join(lines)}, timeout=20)
     except Exception as e:
@@ -321,16 +432,73 @@ def notify_telegram(touched):
 
 
 def deploy():
-    """Καλεί το ήδη υπάρχον monitor.py publish για άμεσο ανέβασμα στο Cloudflare Pages."""
+    """Καλεί το υπάρχον monitor.py publish και ΕΠΙΒΕΒΑΙΩΝΕΙ πραγματικό deploy.
+
+    Προσοχή: το `python monitor.py publish` πάντα επιστρέφει exit code 0, ακόμη κι αν
+    το ίδιο το deploy αποτύχει (το monitor.py απλώς τυπώνει "[!] ..." και συνεχίζει).
+    Άρα ΔΕΝ αρκεί να κοιτάξουμε το returncode — ελέγχουμε επιπλέον αν άλλαξε πραγματικά
+    το last_deploy.txt (το μόνο σίγουρο ίχνος επιτυχημένου deploy μέσα στο monitor.py).
+
+    Backend: αν υπάρχει cloudflare.txt, το monitor.py χρησιμοποιεί Cloudflare Pages·
+    διαφορετικά πέφτει σε Netlify (παλιά, ξεπερασμένη λύση — το αναφέρουμε ρητά αν συμβεί,
+    δεν το κρύβουμε πίσω από ένα γενικό "Cloudflare" μήνυμα).
+
+    Επιστρέφει (ok: bool, backend: str, detail: str).
+    """
+    marker = os.path.join(HERE, "last_deploy.txt")
+    before = open(marker, encoding="utf-8").read().strip() if os.path.exists(marker) else None
+
+    cf_present = os.path.exists(os.path.join(HERE, "cloudflare.txt"))
+    backend = "Cloudflare Pages" if cf_present else "Netlify (ΠΡΟΣΟΧΗ: δεν βρέθηκε cloudflare.txt — ξεπερασμένο fallback)"
+
     try:
-        subprocess.run([sys.executable, os.path.join(HERE, "monitor.py"), "publish"],
-                        check=False, cwd=HERE)
+        proc = subprocess.run(
+            [sys.executable, os.path.join(HERE, "monitor.py"), "publish"],
+            cwd=HERE, capture_output=True, text=True, timeout=300,
+        )
     except Exception as e:
-        print("[!] Deploy call failed:", e)
+        detail = f"Δεν έτρεξε καν το monitor.py publish: {e}"
+        print(f"[DEPLOY FAILED] {detail}")
+        return False, backend, detail
+
+    output = (proc.stdout or "") + (proc.stderr or "")
+    print(output)
+
+    after = open(marker, encoding="utf-8").read().strip() if os.path.exists(marker) else None
+    hash_changed = after is not None and after != before
+    looks_ok = "[!]" not in output and "σφάλμα" not in output.lower()
+    ok = proc.returncode == 0 and hash_changed and looks_ok
+
+    if ok:
+        return True, backend, output
+
+    detail = (f"exit={proc.returncode}, hash πριν={before}, hash μετά={after} "
+              f"(hash_changed={hash_changed}), backend={backend}. Έξοδος:\n{output}")
+    print(f"[DEPLOY FAILED] Δεν επιβεβαιώθηκε πραγματικό deploy. {detail}")
+    return False, backend, detail
 
 
 if __name__ == "__main__":
-    touched = run()
-    if touched:
-        deploy()
-        notify_telegram(touched)
+    touched, changed_files = run()
+
+    if not touched:
+        # τίποτα να δημοσιευτεί· δεν τρέχουμε deploy ούτε γράφουμε manifest
+        sys.exit(0)
+
+    # Γράφουμε τη λίστα αρχείων που επιτρέπεται να προστεθούν στο git (βλ. workflow
+    # "Save state" — git add ΜΟΝΟ αυτά, ποτέ `git add -A`).
+    with open(CHANGED_FILES_MANIFEST, "w", encoding="utf-8") as f:
+        f.write("\n".join(changed_files) + "\n")
+
+    ok, backend, detail = deploy()
+    if ok:
+        with open(CHANGED_FILES_MANIFEST, "a", encoding="utf-8") as f:
+            f.write("last_deploy.txt\nlast_upload_time.txt\n")
+        notify_telegram(touched, deploy_ok=True, backend=backend)
+    else:
+        notify_telegram(touched, deploy_ok=False, backend=backend, error_detail=detail)
+        # Σταματάμε με σαφές σφάλμα· το GitHub Actions step θα αποτύχει ρητά,
+        # άρα δεν θα τρέξει καν το επόμενο "Save state" (git commit/push) — καμία
+        # μισοτελειωμένη κατάσταση δεν καταλήγει στο repo.
+        print("[FATAL] Deploy δεν επιβεβαιώθηκε — διακοπή χωρίς commit/push.")
+        sys.exit(1)

@@ -1,8 +1,12 @@
 name: Site Growth Agent (Agent 2)
 
 on:
-  schedule:
-    - cron: '0 5 * * *'   # 08:00 Αθήνα (UTC+3) — μετά το πρωινό batch ανακοινώσεων
+  # ΠΡΟΣΩΡΙΝΑ ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟ (13/10/2026): μετά τον έλεγχο βρέθηκε πρόβλημα στο
+  # φιλτράρισμα ανακοινώσεων. Η διόρθωση έγινε στο site_growth_agent.py, αλλά το
+  # αυτόματο καθημερινό τρέξιμο μένει απενεργοποιημένο μέχρι να το εγκρίνει ο χρήστης.
+  # Για να ενεργοποιηθεί ξανά: κατάργησε το σχόλιο στις επόμενες 2 γραμμές.
+  # schedule:
+  #   - cron: '0 5 * * *'   # 08:00 Αθήνα (UTC+3) — μετά το πρωινό batch ανακοινώσεων
   workflow_dispatch:
 
 concurrency:
@@ -37,16 +41,29 @@ jobs:
           [ -n "$CLOUDFLARE_TXT" ] && printf '%s\n' "$CLOUDFLARE_TXT" > cloudflare.txt
           true
 
+      - name: Run automated filter tests (must pass before anything is published)
+        run: python test_site_growth_agent.py
+
       - name: Run Site Growth Agent (build pages + deploy + Telegram report)
         run: python site_growth_agent.py
+        # Σημείωση: αν το deploy() δεν επιβεβαιώσει πραγματικό ανέβασμα, το script
+        # κάνει exit 1 εδώ — το βήμα αποτυγχάνει και το επόμενο ΔΕΝ τρέχει καθόλου,
+        # άρα ποτέ δεν γίνεται commit/push μισοτελειωμένης κατάστασης.
 
-      - name: Save state (manual.json, νέες σελίδες, log)
+      - name: Save state — ΜΟΝΟ τα αρχεία που δικαιούται να αλλάξει ο Agent 2
         run: |
           git config user.name "site-growth-agent"
           git config user.email "site-growth-agent@users.noreply.github.com"
-          git add -A
-          if ! git diff --cached --quiet; then
-            git commit -m "Agent 2: site growth update $(date +'%Y-%m-%d %H:%M')"
-            git pull --rebase -q || true
-            git push
+          if [ -f .agent2_changed_files.txt ]; then
+            # git add ΜΟΝΟ ό,τι ανέφερε το ίδιο το script ότι άλλαξε (ποτέ `git add -A`,
+            # ώστε να μην παρασυρθούν τυχόν ταυτόχρονες αλλαγές άλλων bots).
+            xargs -a .agent2_changed_files.txt -r git add --
+            rm -f .agent2_changed_files.txt
+            if ! git diff --cached --quiet; then
+              git commit -m "Agent 2: site growth update $(date +'%Y-%m-%d %H:%M')"
+              git pull --rebase -q || true
+              git push
+            fi
+          else
+            echo "Δεν υπάρχει .agent2_changed_files.txt — καμία αλλαγή να γίνει commit."
           fi
