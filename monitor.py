@@ -6,7 +6,7 @@
   python monitor.py digest         # περίληψη τελευταίων 24 ωρών (+αρχείο digest_ΗΜΕΡΑ.md)
   python monitor.py publish        # ανεβάζει τώρα το site (φάκελος site) στο Netlify
 """
-import argparse, hashlib, io, json, os, re, sqlite3, time, unicodedata, zipfile
+import argparse, hashlib, io, json, os, re, sqlite3, subprocess, time, unicodedata, zipfile
 from datetime import datetime, timedelta
 from urllib.parse import urljoin
 
@@ -797,9 +797,33 @@ def deploy():
     return deploy_netlify()
 
 
+def run_seo_prerender():
+    """Ξαναφτιάχνει τα στατικά .html του site/epidomata/<slug> και των βασικών
+    ενοτήτων, με το σωστό <title>/meta ήδη μέσα στο raw HTML (βλ. το σχόλιο στην
+    κορυφή του generate_seo_pages.mjs). Χωρίς αυτό, η Google δείχνει στα
+    αποτελέσματα αναζήτησης το γενικό τίτλο της αρχικής σελίδας για κάθε URL —
+    πολύ χαμηλό CTR ακόμα κι όταν η θέση είναι καλή.
+    Αν δεν υπάρχει node στο περιβάλλον, απλώς προειδοποιεί και συνεχίζει:
+    δεν μπλοκάρει ποτέ το deploy των ανακοινώσεων."""
+    script = os.path.join(HERE, "generate_seo_pages.mjs")
+    if not os.path.isfile(script):
+        return
+    try:
+        r = subprocess.run(["node", script], cwd=HERE, capture_output=True, text=True, timeout=60)
+        if r.returncode != 0:
+            print(f"[!] Site: generate_seo_pages απέτυχε ({r.stderr.strip()[:300]}) — συνεχίζω χωρίς αυτό.")
+        elif r.stdout.strip():
+            print(r.stdout.strip())
+    except FileNotFoundError:
+        print("[!] Site: δεν βρέθηκε node — παραλείπεται το SEO prerender των στατικών σελίδων.")
+    except Exception as e:
+        print(f"[!] Site: generate_seo_pages σφάλμα ({e}) — συνεχίζω χωρίς αυτό.")
+
+
 def publish(force=False):
     """Ανεβάζει το site μόνο όταν υπάρχουν νέες ανακοινώσεις (ή με force)."""
     write_site_json()
+    run_seo_prerender()
     h = hashlib.sha1()  # αποτύπωμα όλου του φακέλου site (ανακοινώσεις + σχέδιο)
     for root, _, files in sorted(os.walk(SITE)):
         for fn in sorted(files):
