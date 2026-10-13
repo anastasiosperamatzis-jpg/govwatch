@@ -20,7 +20,9 @@ Agent 2 — Site Growth Agent (v2 — διορθωμένη έκδοση μετά
      επιστρέφει 0.
   7. Γράφει ποια ΔΙΚΑ ΤΟΥ αρχεία άλλαξε σε .agent2_changed_files.txt, ώστε το git add
      στο workflow να περιορίζεται σε αυτά — ποτέ `git add -A`.
-  8. Γράφει σύντομη αναφορά στο site_growth_log.md και (αν υπάρχει telegram.txt) στο Telegram.
+  8. Γράφει σύντομη αναφορά στο site_growth_log.md και (αν υπάρχει email.txt) στέλνει
+     καθημερινή αναφορά με EMAIL (όχι Telegram — βλ. notify_email). Τα 20 υπάρχοντα
+     Telegram bots του GovWatch δεν αγγίζονται καθόλου από αυτό το αρχείο.
 
 Σχεδιασμένο να τρέχει μόνο του, 1 φορά τη μέρα, μέσα από GitHub Actions
 (.github/workflows/site-growth-agent.yml).
@@ -400,35 +402,106 @@ def run():
     return touched, sorted(changed_files)
 
 
-def notify_telegram(touched, deploy_ok, backend, error_detail=None):
-    token, chat = None, None
-    path = os.path.join(HERE, "telegram.txt")
-    if os.path.exists(path):
-        with open(path, encoding="utf-8") as f:
-            lines = [l.strip() for l in f.read().splitlines() if l.strip()]
-        if lines:
-            token = lines[0]
-        if len(lines) > 1:
-            chat = lines[1]
-    token = os.getenv("TELEGRAM_TOKEN", token)
-    chat = os.getenv("TELEGRAM_CHAT_ID", chat)
-    if not (token and chat):
-        return
+DEFAULT_REPORT_TO = "epidomatatora.reports@gmail.com"
+
+
+def build_email_report(touched, deploy_ok, backend, error_detail=None):
+    """Φτιάχνει (subject, body) για την καθημερινή αναφορά — ΧΩΡΙΣ δίκτυο, άρα
+    ελέγχεται πλήρως με δοκιμές (βλ. test_site_growth_agent.py). Καλύπτει τα 5
+    σημεία που ζητήθηκαν: περιεχόμενο, SEO, δημοσίευση/αποτυχία, προβλήματα,
+    μετρήσεις Google.
+    """
+    today = datetime.now().strftime("%d/%m/%Y")
+    status_word = "ΕΠΙΤΥΧΙΑ" if deploy_ok else "ΠΡΟΒΛΗΜΑ"
+    subject = f"[Agent 2 — Site Growth] Καθημερινή αναφορά {today} — {status_word}"
+
+    lines = [f"Αναφορά Agent 2 (Site Growth) — {today}", ""]
+
+    lines.append("1) Περιεχόμενο που δημιουργήθηκε/ενημερώθηκε:")
+    if touched:
+        for theme, n, action in touched:
+            verb = "✨ νέα σελίδα" if action == "created" else "↻ ανανεώθηκε"
+            lines.append(f"   • {theme['nav']} — {verb} ({n} ανακοινώσεις) — /{theme['slug']}.html")
+    else:
+        lines.append("   • Καμία αλλαγή σήμερα (δεν υπήρχαν αρκετές νέες έγκυρες ανακοινώσεις ανά θέμα).")
+
+    lines.append("")
+    lines.append("2) Αλλαγές SEO:")
+    if touched:
+        lines.append("   Για κάθε σελίδα που άλλαξε, ενημερώθηκαν αυτόματα: τίτλος, meta description,")
+        lines.append("   canonical link, Open Graph tags, και JSON-LD δομημένα δεδομένα (FAQPage).")
+    else:
+        lines.append("   Καμία — δεν άλλαξε/δημιουργήθηκε σελίδα σήμερα.")
+
+    lines.append("")
+    lines.append("3) Δημοσίευση:")
+    if not touched:
+        lines.append("   — Δεν έγινε προσπάθεια deploy (δεν υπήρχε καμία αλλαγή να δημοσιευτεί).")
+    elif deploy_ok:
+        lines.append(f"   ✅ Το deploy επιβεβαιώθηκε πραγματικά (backend: {backend}).")
+    else:
+        lines.append(f"   ❌ ΑΠΕΤΥΧΕ το deploy (backend: {backend}). Οι αλλαγές ΔΕΝ ανέβηκαν live.")
+
+    lines.append("")
+    lines.append("4) Προβλήματα & ενέργειες που χρειάζονται:")
+    if error_detail:
+        lines.append(f"   ⚠️ {error_detail[:1000]}")
+        lines.append("   Ενέργεια: έλεγξε το GitHub Actions run του Agent 2 πριν ξανατρέξει.")
+    else:
+        lines.append("   Κανένα πρόβλημα σήμερα.")
+
+    lines.append("")
+    lines.append("5) Μετρήσεις Google (Search Console / Analytics):")
+    lines.append("   Δεν υπάρχει ακόμη σύνδεση με Google Search Console/Analytics σε αυτό το")
+    lines.append("   σύστημα — το πεδίο αυτό θα παραμείνει κενό (όχι εφευρημένοι αριθμοί) μέχρι")
+    lines.append("   να συνδεθεί πραγματική πηγή δεδομένων.")
+
+    return subject, "\n".join(lines) + "\n"
+
+
+def notify_email(touched, deploy_ok, backend, error_detail=None):
+    """Στέλνει την καθημερινή αναφορά με EMAIL (αντί για Telegram), μέσω Gmail SMTP.
+
+    Credentials από email.txt (ΙΔΙΟ μοτίβο με telegram.txt/cloudflare.txt — δεν
+    υπάρχει άλλη έτοιμη λειτουργία email σε αυτό το repo για να επαναχρησιμοποιηθεί,
+    βλ. αναφορά): γραμμή 1 = διεύθυνση αποστολέα/λογαριασμού, γραμμή 2 = Gmail App
+    Password, προαιρετική γραμμή 3 = παραλήπτης (αν λείπει, στέλνεται στην ίδια
+    διεύθυνση — epidomatatora.reports@gmail.com).
+
+    ΔΕΝ αγγίζει telegram.txt ούτε τα 20 υπάρχοντα Telegram bots του GovWatch.
+    """
+    path = os.path.join(HERE, "email.txt")
+    if not os.path.exists(path):
+        print("[!] Δεν βρέθηκε email.txt — η αναφορά ΔΕΝ στάλθηκε με email (μόνο στο log).")
+        return False
+
+    with open(path, encoding="utf-8") as f:
+        lines = [l.strip() for l in f.read().splitlines() if l.strip()]
+    if len(lines) < 2:
+        print("[!] email.txt υπάρχει αλλά δεν έχει τις 2 απαραίτητες γραμμές (διεύθυνση, app password).")
+        return False
+    sender, app_password = lines[0], lines[1]
+    recipient = lines[2] if len(lines) > 2 else DEFAULT_REPORT_TO
+
+    subject, body = build_email_report(touched, deploy_ok, backend, error_detail)
 
     try:
-        import requests
-        if deploy_ok:
-            lines = [f"🌱 Agent 2 (Site Growth) ενημέρωσε το site ({backend}):"]
-            for theme, n, action in touched:
-                verb = "νέα σελίδα" if action == "created" else "ανανεώθηκε"
-                lines.append(f"• {theme['nav']} — {verb} ({n} ανακοινώσεις)")
-        else:
-            lines = [f"⚠️ Agent 2 (Site Growth): ΑΠΕΤΥΧΕ το deploy ({backend}). "
-                     f"Οι σελίδες ΔΕΝ ανέβηκαν live. Λεπτομέρειες: {(error_detail or '')[:300]}"]
-        requests.post(f"https://api.telegram.org/bot{token}/sendMessage",
-                      data={"chat_id": chat, "text": "\n".join(lines)}, timeout=20)
+        import smtplib
+        from email.mime.text import MIMEText
+
+        msg = MIMEText(body, "plain", "utf-8")
+        msg["Subject"] = subject
+        msg["From"] = sender
+        msg["To"] = recipient
+
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=30) as server:
+            server.login(sender, app_password)
+            server.sendmail(sender, [recipient], msg.as_string())
+        print(f"[✓] Email αναφοράς στάλθηκε: {sender} -> {recipient}")
+        return True
     except Exception as e:
-        print("[!] Telegram report failed:", e)
+        print("[!] Αποστολή email ΑΠΕΤΥΧΕ:", e)
+        return False
 
 
 def deploy():
@@ -482,7 +555,10 @@ if __name__ == "__main__":
     touched, changed_files = run()
 
     if not touched:
-        # τίποτα να δημοσιευτεί· δεν τρέχουμε deploy ούτε γράφουμε manifest
+        # τίποτα να δημοσιευτεί· δεν τρέχουμε deploy ούτε γράφουμε manifest, αλλά
+        # στέλνουμε ΚΑΙ ΠΑΛΙ την καθημερινή αναφορά (ώστε να είναι όντως καθημερινή,
+        # όχι μόνο τις μέρες που άλλαξε κάτι) — χωρίς deploy, backend="—".
+        notify_email([], deploy_ok=True, backend="— (καμία αλλαγή σήμερα)")
         sys.exit(0)
 
     # Γράφουμε τη λίστα αρχείων που επιτρέπεται να προστεθούν στο git (βλ. workflow
@@ -494,9 +570,9 @@ if __name__ == "__main__":
     if ok:
         with open(CHANGED_FILES_MANIFEST, "a", encoding="utf-8") as f:
             f.write("last_deploy.txt\nlast_upload_time.txt\n")
-        notify_telegram(touched, deploy_ok=True, backend=backend)
+        notify_email(touched, deploy_ok=True, backend=backend)
     else:
-        notify_telegram(touched, deploy_ok=False, backend=backend, error_detail=detail)
+        notify_email(touched, deploy_ok=False, backend=backend, error_detail=detail)
         # Σταματάμε με σαφές σφάλμα· το GitHub Actions step θα αποτύχει ρητά,
         # άρα δεν θα τρέξει καν το επόμενο "Save state" (git commit/push) — καμία
         # μισοτελειωμένη κατάσταση δεν καταλήγει στο repo.

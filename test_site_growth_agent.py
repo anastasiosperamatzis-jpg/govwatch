@@ -177,6 +177,56 @@ def test_upsert_manual_never_touches_foreign_urls():
     return sorted(A.AGENT2_URLS)
 
 
+def test_email_report_success_contains_all_5_sections():
+    """Το καθημερινό email πρέπει να έχει τα 5 ζητηθέντα σημεία, χωρίς δίκτυο
+    (build_email_report είναι pure function — δεν στέλνει τίποτα, μόνο συνθέτει
+    κείμενο, άρα ελέγχεται χωρίς πραγματικά credentials)."""
+    touched = [(theme("epidoma-paidiou-a21"), 3, "created")]
+    subject, body = A.build_email_report(touched, deploy_ok=True, backend="Cloudflare Pages")
+    assert "Agent 2" in subject and "ΕΠΙΤΥΧΙΑ" in subject
+    for marker in (
+        "1) Περιεχόμενο", "2) Αλλαγές SEO", "3) Δημοσίευση", "4) Προβλήματα",
+        "5) Μετρήσεις Google",
+    ):
+        assert marker in body, f"Λείπει η ενότητα: {marker}"
+    assert "epidoma-paidiou-a21" in body
+    assert "✅" in body  # επιβεβαιωμένο deploy
+    return "OK — subject: " + subject
+
+
+def test_email_report_failure_shows_error_and_no_fake_success():
+    """Σε αποτυχημένο deploy, το email ΔΕΝ πρέπει ποτέ να λέει ότι επιβεβαιώθηκε."""
+    touched = [(theme("rythmisi-ofeilon"), 2, "updated")]
+    _, body = A.build_email_report(
+        touched, deploy_ok=False, backend="Cloudflare Pages",
+        error_detail="exit=0, hash πριν=abc, hash μετά=abc (hash_changed=False)",
+    )
+    assert "❌" in body
+    assert "ΑΠΕΤΥΧΕ" in body
+    assert "επιβεβαιώθηκε πραγματικά" not in body
+    assert "hash_changed=False" in body
+    return "OK"
+
+
+def test_email_report_no_changes_does_not_claim_deploy():
+    """Όταν δεν υπάρχει καμία αλλαγή, το email δεν πρέπει να λέει ότι έγινε deploy."""
+    _, body = A.build_email_report([], deploy_ok=True, backend="— (καμία αλλαγή σήμερα)")
+    assert "Δεν έγινε προσπάθεια deploy" in body
+    assert "επιβεβαιώθηκε πραγματικά" not in body
+    return "OK"
+
+
+def test_notify_email_without_credentials_does_not_crash():
+    """Χωρίς email.txt (δεν έχει δημιουργηθεί ακόμη ο λογαριασμός/το App Password),
+    η notify_email() πρέπει να επιστρέφει False χωρίς exception — ποτέ να μην
+    προσποιηθεί ότι στάλθηκε."""
+    assert not os.path.exists(os.path.join(HERE, "email.txt")), \
+        "ΔΕΝ πρέπει να υπάρχει πραγματικό email.txt στο repo (μόνο μέσω GitHub secret)"
+    result = A.notify_email([], deploy_ok=True, backend="test")
+    assert result is False, "Χωρίς credentials, notify_email() πρέπει να γυρίσει False (όχι να το κρύψει)"
+    return "OK — επιβεβαιώθηκε ότι δεν δηλώνεται ψευδής επιτυχία χωρίς credentials"
+
+
 if __name__ == "__main__":
     # Εκτέλεση χωρίς pytest — τυπώνει αναφορά PASS/FAIL για κάθε περίπτωση.
     tests = [
@@ -185,6 +235,10 @@ if __name__ == "__main__":
         ("Πραγματικό feed: καμία εξαίρεση να μην περάσει", test_real_feed_sample_if_present),
         ("Self-reference: οι δικές του σελίδες πρέπει να εξαιρούνται", test_own_pages_excluded_from_candidate_feed),
         ("Scope: ποτέ αλλαγή εκτός των 4 URLs", test_upsert_manual_never_touches_foreign_urls),
+        ("Email αναφοράς: περιέχει τα 5 ζητηθέντα σημεία (επιτυχία)", test_email_report_success_contains_all_5_sections),
+        ("Email αναφοράς: αποτυχία δείχνει σφάλμα, όχι ψευδή επιτυχία", test_email_report_failure_shows_error_and_no_fake_success),
+        ("Email αναφοράς: καμία αλλαγή δεν δηλώνεται ως deploy", test_email_report_no_changes_does_not_claim_deploy),
+        ("notify_email χωρίς credentials: False, όχι exception/ψευδής επιτυχία", test_notify_email_without_credentials_does_not_crash),
     ]
     failures = 0
     for name, fn in tests:

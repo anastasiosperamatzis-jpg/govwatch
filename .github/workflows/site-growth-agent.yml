@@ -34,11 +34,19 @@ jobs:
 
       - name: Write secret files
         env:
-          TELEGRAM_TXT: ${{ secrets.TELEGRAM_TXT }}
           CLOUDFLARE_TXT: ${{ secrets.CLOUDFLARE_TXT }}
+          EMAIL_TXT: ${{ secrets.EMAIL_TXT }}
         run: |
-          [ -n "$TELEGRAM_TXT" ] && printf '%s\n' "$TELEGRAM_TXT" > telegram.txt
+          # Σημείωση: ο Agent 2 ΔΕΝ χρησιμοποιεί πλέον Telegram (βλ. notify_email στο
+          # site_growth_agent.py) — άρα δεν γράφουμε telegram.txt εδώ. Το secret
+          # TELEGRAM_TXT παραμένει άθικτο και συνεχίζει να τροφοδοτεί τα 20 υπάρχοντα
+          # Telegram bots μέσα από τα ΔΙΚΑ ΤΟΥΣ workflows (govwatch.yml κ.λπ.).
           [ -n "$CLOUDFLARE_TXT" ] && printf '%s\n' "$CLOUDFLARE_TXT" > cloudflare.txt
+          # EMAIL_TXT: 2-3 γραμμές — διεύθυνση Gmail, Gmail App Password, [προαιρετικός
+          # παραλήπτης]. Αν το secret δεν υπάρχει ακόμη, δεν γράφεται email.txt και ο
+          # Agent 2 απλά παραλείπει την αποστολή email (βλ. notify_email) χωρίς να
+          # αποτύχει το run — η αναφορά παραμένει έτσι κι αλλιώς στο site_growth_log.md.
+          [ -n "$EMAIL_TXT" ] && printf '%s\n' "$EMAIL_TXT" > email.txt
           true
 
       - name: Run automated filter tests (must pass before anything is published)
