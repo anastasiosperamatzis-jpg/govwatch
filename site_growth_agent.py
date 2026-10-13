@@ -402,7 +402,29 @@ def run():
     return touched, sorted(changed_files)
 
 
-DEFAULT_REPORT_TO = "epidomatatora.reports@gmail.com"
+DEFAULT_REPORT_TO = "anaspera2@ymail.com"
+
+# Αυτόματη επιλογή SMTP server βάσει του domain της διεύθυνσης αποστολέα, ώστε το
+# email.txt να μην χρειάζεται να αναφέρει ρητά τον SMTP server — λειτουργεί με
+# Gmail, Yahoo/ymail (η τρέχουσα διεύθυνση) ή Outlook/Hotmail χωρίς αλλαγή κώδικα.
+SMTP_SERVERS = {
+    "gmail.com": ("smtp.gmail.com", 465, "ssl"),
+    "googlemail.com": ("smtp.gmail.com", 465, "ssl"),
+    "yahoo.com": ("smtp.mail.yahoo.com", 465, "ssl"),
+    "ymail.com": ("smtp.mail.yahoo.com", 465, "ssl"),
+    "rocketmail.com": ("smtp.mail.yahoo.com", 465, "ssl"),
+    "outlook.com": ("smtp.office365.com", 587, "starttls"),
+    "hotmail.com": ("smtp.office365.com", 587, "starttls"),
+    "live.com": ("smtp.office365.com", 587, "starttls"),
+}
+
+
+def smtp_settings_for(address):
+    """Γυρίζει (host, port, mode) βάσει του domain της διεύθυνσης, ή None αν το
+    domain δεν είναι γνωστό (τότε η notify_email() αποτυγχάνει με σαφές μήνυμα,
+    αντί να μαντέψει λάθος server)."""
+    domain = (address or "").rsplit("@", 1)[-1].strip().lower()
+    return SMTP_SERVERS.get(domain)
 
 
 def build_email_report(touched, deploy_ok, backend, error_detail=None):
@@ -460,13 +482,15 @@ def build_email_report(touched, deploy_ok, backend, error_detail=None):
 
 
 def notify_email(touched, deploy_ok, backend, error_detail=None):
-    """Στέλνει την καθημερινή αναφορά με EMAIL (αντί για Telegram), μέσω Gmail SMTP.
+    """Στέλνει την καθημερινή αναφορά με EMAIL (αντί για Telegram), μέσω SMTP.
 
     Credentials από email.txt (ΙΔΙΟ μοτίβο με telegram.txt/cloudflare.txt — δεν
     υπάρχει άλλη έτοιμη λειτουργία email σε αυτό το repo για να επαναχρησιμοποιηθεί,
-    βλ. αναφορά): γραμμή 1 = διεύθυνση αποστολέα/λογαριασμού, γραμμή 2 = Gmail App
+    βλ. αναφορά): γραμμή 1 = διεύθυνση αποστολέα/λογαριασμού, γραμμή 2 = App
     Password, προαιρετική γραμμή 3 = παραλήπτης (αν λείπει, στέλνεται στην ίδια
-    διεύθυνση — epidomatatora.reports@gmail.com).
+    διεύθυνση — DEFAULT_REPORT_TO, anaspera2@ymail.com). Ο SMTP server επιλέγεται
+    αυτόματα βάσει του domain του αποστολέα (βλ. smtp_settings_for) — λειτουργεί
+    με Yahoo/ymail, Gmail ή Outlook χωρίς αλλαγή κώδικα.
 
     ΔΕΝ αγγίζει telegram.txt ούτε τα 20 υπάρχοντα Telegram bots του GovWatch.
     """
@@ -483,6 +507,13 @@ def notify_email(touched, deploy_ok, backend, error_detail=None):
     sender, app_password = lines[0], lines[1]
     recipient = lines[2] if len(lines) > 2 else DEFAULT_REPORT_TO
 
+    settings = smtp_settings_for(sender)
+    if not settings:
+        print(f"[!] Άγνωστο email domain για αποστολέα {sender!r} — δεν ξέρω ποιον SMTP server "
+              f"να χρησιμοποιήσω. Πρόσθεσέ το στο SMTP_SERVERS στο site_growth_agent.py.")
+        return False
+    host, port, mode = settings
+
     subject, body = build_email_report(touched, deploy_ok, backend, error_detail)
 
     try:
@@ -494,10 +525,16 @@ def notify_email(touched, deploy_ok, backend, error_detail=None):
         msg["From"] = sender
         msg["To"] = recipient
 
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=30) as server:
-            server.login(sender, app_password)
-            server.sendmail(sender, [recipient], msg.as_string())
-        print(f"[✓] Email αναφοράς στάλθηκε: {sender} -> {recipient}")
+        if mode == "ssl":
+            with smtplib.SMTP_SSL(host, port, timeout=30) as server:
+                server.login(sender, app_password)
+                server.sendmail(sender, [recipient], msg.as_string())
+        else:  # starttls
+            with smtplib.SMTP(host, port, timeout=30) as server:
+                server.starttls()
+                server.login(sender, app_password)
+                server.sendmail(sender, [recipient], msg.as_string())
+        print(f"[✓] Email αναφοράς στάλθηκε: {sender} -> {recipient} (μέσω {host})")
         return True
     except Exception as e:
         print("[!] Αποστολή email ΑΠΕΤΥΧΕ:", e)

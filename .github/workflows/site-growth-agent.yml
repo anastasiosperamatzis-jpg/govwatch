@@ -42,10 +42,13 @@ jobs:
           # TELEGRAM_TXT παραμένει άθικτο και συνεχίζει να τροφοδοτεί τα 20 υπάρχοντα
           # Telegram bots μέσα από τα ΔΙΚΑ ΤΟΥΣ workflows (govwatch.yml κ.λπ.).
           [ -n "$CLOUDFLARE_TXT" ] && printf '%s\n' "$CLOUDFLARE_TXT" > cloudflare.txt
-          # EMAIL_TXT: 2-3 γραμμές — διεύθυνση Gmail, Gmail App Password, [προαιρετικός
-          # παραλήπτης]. Αν το secret δεν υπάρχει ακόμη, δεν γράφεται email.txt και ο
-          # Agent 2 απλά παραλείπει την αποστολή email (βλ. notify_email) χωρίς να
-          # αποτύχει το run — η αναφορά παραμένει έτσι κι αλλιώς στο site_growth_log.md.
+          # EMAIL_TXT: 2-3 γραμμές — διεύθυνση email (π.χ. anaspera2@ymail.com), App
+          # Password αυτού του λογαριασμού, [προαιρετικός παραλήπτης]. Ο SMTP server
+          # επιλέγεται αυτόματα βάσει του domain (βλ. smtp_settings_for στο
+          # site_growth_agent.py — υποστηρίζει ymail/Yahoo, Gmail, Outlook). Αν το
+          # secret δεν υπάρχει ακόμη, δεν γράφεται email.txt και ο Agent 2 απλά
+          # παραλείπει την αποστολή email (βλ. notify_email) χωρίς να αποτύχει το run
+          # — η αναφορά παραμένει έτσι κι αλλιώς στο site_growth_log.md.
           [ -n "$EMAIL_TXT" ] && printf '%s\n' "$EMAIL_TXT" > email.txt
           true
 

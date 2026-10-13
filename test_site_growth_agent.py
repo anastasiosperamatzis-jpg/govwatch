@@ -216,6 +216,16 @@ def test_email_report_no_changes_does_not_claim_deploy():
     return "OK"
 
 
+def test_smtp_settings_detected_for_ymail_and_unknown_domain():
+    """Η τρέχουσα διεύθυνση αναφοράς (anaspera2@ymail.com) πρέπει να ανιχνεύεται
+    σωστά ως Yahoo SMTP· ένα άγνωστο domain πρέπει να γυρίζει None (ρητή αποτυχία),
+    όχι λάθος μάντεμα SMTP server."""
+    assert A.smtp_settings_for("anaspera2@ymail.com") == ("smtp.mail.yahoo.com", 465, "ssl")
+    assert A.smtp_settings_for("x@gmail.com") == ("smtp.gmail.com", 465, "ssl")
+    assert A.smtp_settings_for("x@some-unknown-provider.tld") is None
+    return "OK"
+
+
 def test_notify_email_without_credentials_does_not_crash():
     """Χωρίς email.txt (δεν έχει δημιουργηθεί ακόμη ο λογαριασμός/το App Password),
     η notify_email() πρέπει να επιστρέφει False χωρίς exception — ποτέ να μην
@@ -238,6 +248,7 @@ if __name__ == "__main__":
         ("Email αναφοράς: περιέχει τα 5 ζητηθέντα σημεία (επιτυχία)", test_email_report_success_contains_all_5_sections),
         ("Email αναφοράς: αποτυχία δείχνει σφάλμα, όχι ψευδή επιτυχία", test_email_report_failure_shows_error_and_no_fake_success),
         ("Email αναφοράς: καμία αλλαγή δεν δηλώνεται ως deploy", test_email_report_no_changes_does_not_claim_deploy),
+        ("SMTP server: σωστή ανίχνευση για ymail/gmail, None για άγνωστο domain", test_smtp_settings_detected_for_ymail_and_unknown_domain),
         ("notify_email χωρίς credentials: False, όχι exception/ψευδής επιτυχία", test_notify_email_without_credentials_does_not_crash),
     ]
     failures = 0
