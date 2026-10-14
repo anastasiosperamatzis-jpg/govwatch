@@ -100,3 +100,5 @@
   https://news.google.com/rss/articles/CBMivgFBVV95cUxOdkppRkZCTWNsT1F5MkdWSk1MYWpGNHFyRDNDeFhNMXVrVWtpZzJIMWVUU05yVXBrYUtzWVI4aExPRXREbGdydExmeW4yV3BLZXQ4TDNnX2VTU2JZcUpZZWV2RjVNbk5tUmc1RjJ1WE5ScktPWng5WmIxTENsSGtHNzhvNUh5VUdRN2xTLW5FdHpocno1N0wtLVdyd1JteGhfYW12MjVIQ0h4djNpU2hYaG1ETkkxZHZWUzBpQ09R?oc=5
 - 14/10/2026 07:45 · **Ειδήσεις: ΔΕΗ** · Συντάξεις Νοεμβρίου 2026: Πότε μπαίνουν τα χρήματα στους λογαριασμούς – Τι αλλάζει λόγω της 28ης Οκτωβρίου - karatzova.com
   https://news.google.com/rss/articles/CBMiWkFVX3lxTE1xa0ZxS2pwU29nMnpQa1JyV2otRUtaMTZtS1lvV0JSMF94aDlENy1Jb19DN18xTFVJWGo1ZW0wRjlXX3oxTXRFdWtQeVFLSGRsamluWjZEWWlLdw?oc=5
+- 14/10/2026 13:31 · **Ειδήσεις: Εφορία** · ΑΑΔΕ: Ρύθμιση οφειλών προς το Δημόσιο σε έως 72 δόσεις – Προθεσμία υποβολής αιτήσεων έως 31 Δεκεμβρίου 2026 - πεδμεδε
+  https://news.google.com/rss/articles/CBMixAFBVV95cUxPVUk5ZnFxdFZubHIzTVNBQWFLY1RoR0hYd1pCcm5vdlNCeEZKY0ZKcTdFUllnc0pFMnJHYWFLSEVwRFlfZ2RWbEpjOTdLRFJxVmttYjNNMW5WUmZLeURUcmpKU2VicE5WVzE5eGhpX3BLQW04T1FwUXh1WnQyd0h1OUdWYWdQMmFrVGZpaUM1a0FUZGtRZXpOTVJfYkRXT3V5Q0l6d19hVlBmLUhwSExncGh2eXVxeVdCVnFvRTBNbFNpdm9l?oc=5
