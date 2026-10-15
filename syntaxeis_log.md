@@ -102,3 +102,5 @@
   https://news.google.com/rss/articles/CBMiWkFVX3lxTE1xa0ZxS2pwU29nMnpQa1JyV2otRUtaMTZtS1lvV0JSMF94aDlENy1Jb19DN18xTFVJWGo1ZW0wRjlXX3oxTXRFdWtQeVFLSGRsamluWjZEWWlLdw?oc=5
 - 14/10/2026 13:31 · **Ειδήσεις: Εφορία** · ΑΑΔΕ: Ρύθμιση οφειλών προς το Δημόσιο σε έως 72 δόσεις – Προθεσμία υποβολής αιτήσεων έως 31 Δεκεμβρίου 2026 - πεδμεδε
   https://news.google.com/rss/articles/CBMixAFBVV95cUxPVUk5ZnFxdFZubHIzTVNBQWFLY1RoR0hYd1pCcm5vdlNCeEZKY0ZKcTdFUllnc0pFMnJHYWFLSEVwRFlfZ2RWbEpjOTdLRFJxVmttYjNNMW5WUmZLeURUcmpKU2VicE5WVzE5eGhpX3BLQW04T1FwUXh1WnQyd0h1OUdWYWdQMmFrVGZpaUM1a0FUZGtRZXpOTVJfYkRXT3V5Q0l6d19hVlBmLUhwSExncGh2eXVxeVdCVnFvRTBNbFNpdm9l?oc=5
+- 15/10/2026 10:33 · **Ειδήσεις: Εφορία** · Συντάξεις: Οι ονομαστικές αυξήσεις 2,6% «ψαλιδίζονται» από την Εφορία – Τα καθαρά «στην τσέπη» με παραδείγματα - Aridaia365
+  https://news.google.com/rss/articles/CBMiU0FVX3lxTE9JU194YjBuaGFlT0R5cThHRnhCYmtKWWhtQ2JGOHVLWWNfbWd3cW42ZE5EYmpURTk3VmRUbkJDemltMEwxY29nUGxMZG43OGlpbFFB?oc=5
