@@ -296,3 +296,5 @@
   https://news.google.com/rss/articles/CBMiowFBVV95cUxPdWdGYUlNdDF0dFVaazE0dWY1aDlKb0E2YVl2QThSUWhZS2ZFMUVBcC1JMGw0UVNzaEpaRVZRVzVkZFlMQXNycVR6SjhyaGVMOU0yck9MYWJZS2VLUHh4bDRwTE1nV3NVUXFJNEZwUFM5Z1k1YUJSYXBoY2MwbmNtOGk4bzJLSXFkalhWOWx4MWJiZDFXV2NwRHg1c09LYlNwa1lV0gGjAUFVX3lxTE91Z0ZhSU10MXR0VVprMTR1ZjVoOUpvQTZhWXZBOFJRaFlLZkUxRUFwLUkwbDRRU3NoSlpFVlFXNWRkWUxBc3JxVHpKOHJoZUw5TTJyT0xhYllLZUtQeHhsNHBMTWdXc1VRcUk0RnBQUzlnWTVhQlJhcGhjYzBuY204aThvMktJcWRqWFY5bHgxYmJkMVdXY3BEeDVzT0tiU3BrWVU?oc=5
 - 21/10/2026 13:59 · **e-ΕΦΚΑ Εγκύκλιοι** · 21 Οκτ 2026 Εγκύκλιος 22_2026 Teaser Description Καταγραφή και διαχείριση στοιχείων πολιτών και λοιπών επισκεπτών κατά την είσοδό τους στις υπηρεσίες του e-ΕΦΚΑ
   https://www.e-efka.gov.gr/el/egkyklioi-kai-genika-eggrafa/egkyklios-222026
+- 21/10/2026 14:30 · **Ειδήσεις: Εφορία** · «Ραβασάκια» της ΑΑΔΕ σε 55.000 φορολογούμενους με αδήλωτα αναδρομικά από το 2020 - Cretaone
+  https://news.google.com/rss/articles/CBMioAFBVV95cUxNWllhaUJiWWxEamtpZFVHMk5MTWpjT256ck1lbzRGWTdWRnRVS3Q5VkZjUS0tbHBkS3ZJMVdKeXBUQnlNQWZJUmNlc0xkZ2k2Y19Ma3FIdENRWG5NYU5jS1JDcW5VVXNKYjBOaVpkLXlZbTdzYUxCTlVUY0E0YnhKeW9FQktpMHoxNVlTQmJtQ0RMQmZadWg2UTNuSUFQcS1I?oc=5
