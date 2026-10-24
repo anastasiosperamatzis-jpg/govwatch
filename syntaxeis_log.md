@@ -452,3 +452,5 @@
   https://news.google.com/rss/articles/CBMiywFBVV95cUxPQW1kVUZnTUZmVXhuV3RIeTE5X1plU0pJd0lZRTEzRC0wY1RQbzdrSXBVWlY2ZEl3QlNvUkFWMkZkT19vYk90THhRV1cwaTlWT0lrNEpIaHhNalZ3VU53R0wyTkM5QW5EN1c3TVRPWnlBUWkyMFI5UFRNell4bldJZ1c3cFl5eC1SbHBkWHlGWGZ1TUF4ODhtcDhzazNDdGVpVmV5dFduWk5ueUhfM2tRUFA1OEU4ZF9OclRzNjZTTlRUSzlQVnY1VmpROA?oc=5
 - 24/10/2026 16:06 · **Ειδήσεις: Εφορία** · Η ΑΑΔΕ «ψάχνει» τα αναδρομικά - Thita News
   https://news.google.com/rss/articles/CBMiZkFVX3lxTFB6VzRFdWtleU45akhISEZHUEpnWmJtUVZjNktXNGxsbHRmS3pHSEtESVVQME9GMm5yWjQ3U2RUZjc4S2gwOEpLeDdRZXdEQ2FiamRtOTRSV1JHWWFfRkR1Rzd2bE00QQ?oc=5
+- 24/10/2026 16:39 · **Ειδήσεις: ΔΕΗ** · Συντάξεις Νοεμβρίου: Ξεκίνησαν οι πληρωμές – Ποιοι θα δουν πρώτοι χρήματα στα ΑΤΜ - Fortunegreece.com
+  https://news.google.com/rss/articles/CBMiugFBVV95cUxPMjQ5SXFRc1JVVlZNeDQ0R0VlZUg3X21xRmJTOHFUaWNPLUs4N1k5aDBBd0tTeEg3bDVKVTducVR2cHBXcHprdjlhR2hEc29oMTk5bG5uNFVZMDFtNjRxSGJZdVRFeFh1WFdTLWNNc1YtOUhiNDBNTVZDUERmSExPcDhGbFJQRE9oVmY1RkpfSDdnRTlBdG5WSVlxRmc2OVlZYTV2VHdzZmN0VTlHVVU5OEtiT29VT0ZEUmc?oc=5
