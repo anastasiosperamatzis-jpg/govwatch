@@ -454,3 +454,5 @@
   https://news.google.com/rss/articles/CBMiZkFVX3lxTFB6VzRFdWtleU45akhISEZHUEpnWmJtUVZjNktXNGxsbHRmS3pHSEtESVVQME9GMm5yWjQ3U2RUZjc4S2gwOEpLeDdRZXdEQ2FiamRtOTRSV1JHWWFfRkR1Rzd2bE00QQ?oc=5
 - 24/10/2026 16:39 · **Ειδήσεις: ΔΕΗ** · Συντάξεις Νοεμβρίου: Ξεκίνησαν οι πληρωμές – Ποιοι θα δουν πρώτοι χρήματα στα ΑΤΜ - Fortunegreece.com
   https://news.google.com/rss/articles/CBMiugFBVV95cUxPMjQ5SXFRc1JVVlZNeDQ0R0VlZUg3X21xRmJTOHFUaWNPLUs4N1k5aDBBd0tTeEg3bDVKVTducVR2cHBXcHprdjlhR2hEc29oMTk5bG5uNFVZMDFtNjRxSGJZdVRFeFh1WFdTLWNNc1YtOUhiNDBNTVZDUERmSExPcDhGbFJQRE9oVmY1RkpfSDdnRTlBdG5WSVlxRmc2OVlZYTV2VHdzZmN0VTlHVVU5OEtiT29VT0ZEUmc?oc=5
+- 25/10/2026 05:41 · **Ειδήσεις: Εφορία** · Ραβασάκια για αδήλωτα αναδρομικά στέλνει η ΑΑΔΕ σε συνταξιούχους – Τι πρέπει να κάνουν - Logotypos.gr
+  https://news.google.com/rss/articles/CBMisAFBVV95cUxQNFQ1WUtSNUhqY2YyelVWVjhjeFhsV04yQkpDdXIzWWNzUjJEQlh0WXE2cmhvYzhyalM0MTRYTEVTRlM1WXAySVpHSHYwdlhGR3RYLXFpVktZeGoxT0w2NDhKdklDVGtSUHFyVTB5TTZfODRkUW1uckpCUDVsX3Y5ODl5ck1hSG95OHFmMVVscVktZWZ0YlpnZDVScUhGN3I1ZHE2eXd2bDMtWUpZUEt5dA?oc=5
