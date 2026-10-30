@@ -510,3 +510,5 @@
   https://news.google.com/rss/articles/CBMixgFBVV95cUxOTlI0MmZVYTh4R213TnpMdkdleVgtYmdwUlNOYkZfcGoxNWdMX2RLRWRtbFVkMm16SnpWU2NjR1d0SW0zWFJWLWRtbmxlQmhGVEF6Ull1cS1UMXdFem8xY2M4U3ZSMVRvZ1h4ZFlWVXpjX0cyVW5yX0NhU1NUcHphUlNEQVZFc21VVW13NXBOdjVqQjJQLXNGbXE4MURlQ1lBT1pfNDF1bmJZbVF4TWtfRUJYUm14MnZyZ2VmQkY1WWFBbzlpTmc?oc=5
 - 30/10/2026 11:30 · **Ειδήσεις: Εφορία** · Νέα ρύθμιση 120 δόσεων για χρέη προς την Εφορία και τα Ασφαλιστικά Ταμεία - Rodosreport.gr
   https://news.google.com/rss/articles/CBMioAFBVV95cUxPS2w1WUxjdXpseEs4dm80Q3NUVDRvMFRZblFHNUtsOEltUmM2TGc2MzEtZ1NkeDQ0VWRrZFc3SzZWTFA3V3hjbEtEcUpsM2ZicmF5aGhYT3BvcXhPOWVmNlBHVVhjb0JZdF8zcDRWckwzaHhvMURWLVhRU2YxSGxTTE1RNkVtbXYxYW85SHR0aDBKODRkdmxHQ05uTWNUZER5?oc=5
+- 30/10/2026 13:08 · **Ειδήσεις: Εφορία** · Μάνος Κόνσολας: «Νέα ρύθμιση 120 δόσεων για χρέη προς την Εφορία και τα Ασφαλιστικά Ταμεία - 12vima
+  https://news.google.com/rss/articles/CBMivAFBVV95cUxQWnBNMmJmYlNoemJvaml2WW01VVZvOHo0Tk1iUzhNYXRISFd0aF9nSS1PUFd6SktOQkViQXRnZDBnbnpQZXFiQjBZU3h5emc3SHN2TWpNY0V1SDZCdnlyWG1hSFU5eXcwdEduSGdRZFBQTVNuTE9qajVfNXMtdTREZGQ2dVdKRHBDUFVpZ0JaT3V0ekxjYk9DTU5JcjBuNE9RY21vSHMyclpTRWxYZEdOY3M0ZXBJODJESllYbw?oc=5
