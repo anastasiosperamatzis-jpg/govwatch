@@ -512,3 +512,5 @@
   https://news.google.com/rss/articles/CBMioAFBVV95cUxPS2w1WUxjdXpseEs4dm80Q3NUVDRvMFRZblFHNUtsOEltUmM2TGc2MzEtZ1NkeDQ0VWRrZFc3SzZWTFA3V3hjbEtEcUpsM2ZicmF5aGhYT3BvcXhPOWVmNlBHVVhjb0JZdF8zcDRWckwzaHhvMURWLVhRU2YxSGxTTE1RNkVtbXYxYW85SHR0aDBKODRkdmxHQ05uTWNUZER5?oc=5
 - 30/10/2026 13:08 · **Ειδήσεις: Εφορία** · Μάνος Κόνσολας: «Νέα ρύθμιση 120 δόσεων για χρέη προς την Εφορία και τα Ασφαλιστικά Ταμεία - 12vima
   https://news.google.com/rss/articles/CBMivAFBVV95cUxQWnBNMmJmYlNoemJvaml2WW01VVZvOHo0Tk1iUzhNYXRISFd0aF9nSS1PUFd6SktOQkViQXRnZDBnbnpQZXFiQjBZU3h5emc3SHN2TWpNY0V1SDZCdnlyWG1hSFU5eXcwdEduSGdRZFBQTVNuTE9qajVfNXMtdTREZGQ2dVdKRHBDUFVpZ0JaT3V0ekxjYk9DTU5JcjBuNE9RY21vSHMyclpTRWxYZEdOY3M0ZXBJODJESllYbw?oc=5
+- 31/10/2026 00:04 · **Ειδήσεις: Εφορία** · "Μύθια" στα Τρίκαλα: Ο θρυλικός Γ. Περιστέρης συνταξιοδοτήθηκε και πήγε στην Εφορία με ..κλαρίνα! - TrikalaTroll
+  https://news.google.com/rss/articles/CBMickFVX3lxTFBiNWFELWFjNXdJTHVJRHBSbDJrb1hqXzFMZTBMdUo1X1NtbzhCNDJKRnB0NjhuME41SklDTFBhenRsWXdvN0VrbVY1WGJacmhDdWk0eWU2T0djR3lCQzFWVUoxQThvZ1BZNTJ1OUpGZ2R3QQ?oc=5
