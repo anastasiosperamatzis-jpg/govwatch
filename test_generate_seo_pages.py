@@ -93,17 +93,40 @@ def test_section_pages_have_specific_title():
         assert expect_substr in title
 
 
-def test_body_identical_to_index_html():
-    """Η static σελίδα πρέπει να έχει ΑΚΡΙΒΩΣ το ίδιο <body> (ο ίδιος SPA κώδικας) —
-    αλλάζει μόνο το <head>. Αν αυτό το test σπάσει, κάτι αντιγράφτηκε λάθος."""
+def test_section_pages_body_identical_to_index_html():
+    """Οι βασικές ενότητες (epidomata.html, syntaxeis.html κλπ) πρέπει να έχουν ΑΚΡΙΒΩΣ
+    το ίδιο <body> με το index.html (ο ίδιος SPA κώδικας) — αλλάζει μόνο το <head>.
+    Αν αυτό το test σπάσει, κάτι αντιγράφτηκε λάθος."""
     _run_generator()
     with open(os.path.join(SITE, "index.html"), encoding="utf-8") as f:
         index_html = f.read()
-    with open(os.path.join(SITE, "epidomata", "enischysi-400-syntaxiouxoi.html"), encoding="utf-8") as f:
+    with open(os.path.join(SITE, "epidomata.html"), encoding="utf-8") as f:
         page_html = f.read()
     index_body = index_html[index_html.index("<body>"):]
     page_body = page_html[page_html.index("<body>"):]
     assert index_body == page_body
+
+
+def test_benefit_pages_have_prerendered_content_in_main():
+    """Οι σελίδες επιδομάτων/προγραμμάτων (/epidomata/<slug>.html) ΔΕΝ πρέπει πλέον να
+    έχουν άδειο <main id="app"></main> — αυτό ήταν η πραγματική αιτία του "χαμηλής αξίας
+    περιεχόμενο" από το Google AdSense: ένας crawler που δεν τρέχει JavaScript έβλεπε
+    κενή σελίδα. Αυτό το test επιβεβαιώνει ότι το πραγματικό περιεχόμενο (δικαιούχοι,
+    ποσό, αίτηση, προθεσμία, επίσημη πηγή) είναι ήδη μέσα στο raw HTML."""
+    _run_generator()
+    path = os.path.join(SITE, "epidomata", "epidoma-paidiou-a21.html")
+    with open(path, encoding="utf-8") as f:
+        html = f.read()
+    assert '<main id="app" tabindex="-1"></main>' not in html, "το <main> είναι ακόμα άδειο"
+    for expect_substr in [
+        "Ποιοι είναι δικαιούχοι",
+        "Ποσό",
+        "Πώς γίνεται η αίτηση",
+        "Προθεσμία",
+        "Επίσημη πηγή",
+        "ΟΠΕΚΑ",
+    ]:
+        assert expect_substr in html, f"λείπει {expect_substr!r} από το prerendered περιεχόμενο"
 
 
 if __name__ == "__main__":
