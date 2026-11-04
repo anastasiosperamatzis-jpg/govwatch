@@ -520,3 +520,5 @@
   https://news.google.com/rss/articles/CBMirwFBVV95cUxNTmsxUGFJWDgwVGFRaEczNi0yRlB0WXBscVBibDdjT2cyUkR4ekctaEpPZHJFWjYyT1JNZmR2ZHhDVi1Kb1JkNGlyNlJVUkRnamotZ1RkQldfQm1ZUi1Ka0dMcjN3X0hoMC13MHR1eHhxamtPbUZ2aTRQaFcwZHlLcWpwaG1Cazc3SVNjakp4THZjUDRHVUR0d3dSOEdWY3lIRW9vbkx1YWltSHY2UjA4?oc=5
 - 03/11/2026 18:24 · **ΔΕΗ Δελτία Τύπου** · Όμιλος ΔΕΗ: Η Κωτσόβολος εξαγοράζει την εταιρεία λιανικής Flanco στη Ρουμανία
   https://www.ppcgroup.com/el/omilos-dei/grafeio-typou/deltia-typou/prosfata/deltia-tipou-2026/noemvrios-2026/omilos-deh-h-kotsovolos-eksagorazei-thn-etaireia-lianikis-flanco-sth-roumania/
+- 04/11/2026 18:35 · **Ειδήσεις: Εφορία** · Νέο πακέτο οικονομικών μέτρων: Τι αλλάζει σε φόρους, ΕΝΦΙΑ, συντάξεις και επιδόματα - Magnesia News
+  https://news.google.com/rss/articles/CBMiuwFBVV95cUxQcjZWT1drNjR4c0ZBWFlfazNmWEpWUUhoUlNUcGIwRzAyZ3JWZ0dBdzJfRWhxNmZYaFhQdVJNT0NmbThIRHpuRjM1ZlNOV29jU1VaYkIteTBMOTFuTDFmUS11S0xJcnUxTFpvMWNyZk5tS1lwZ2ZSWlhHOUdSa1BTQzc2azE2Tk9uaGFYQXdjanFvbHc0Q3Iycm1qbmJDRXEwMzkzQ2F1aXpQR2REcE5wSWpTQXhibi1RNXo4?oc=5
