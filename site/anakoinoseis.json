@@ -1,14 +1,6 @@
 [
  {
   "date": "2026-11-06",
-  "foreas": "Υπουργείο Παιδείας",
-  "title": "05-11-26 Σοφία Ζαχαράκη: 1,89 εκατ. ευρώ στο Ιόνιο Πανεπιστήμιο για το φοιτητικό στεγαστικό επίδομα",
-  "url": "https://www.minedu.gov.gr/?view=article&id=71114:05-11-26-sophia-zacharake-1-89-ekat-euro-sto-ionio-panepistemio-gia-to-phoitetiko-stegastiko-epidoma&catid=1183",
-  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
-  "auto": true
- },
- {
-  "date": "2026-11-05",
   "foreas": "Επιδόματα Τώρα",
   "title": "Συντάξεις: Ημερομηνίες Πληρωμών",
   "url": "/syntaxeis-pliromes.html",
@@ -18,7 +10,7 @@
   "cat": "syntaxeis"
  },
  {
-  "date": "2026-11-05",
+  "date": "2026-11-06",
   "foreas": "Επιδόματα Τώρα",
   "title": "Ρύθμιση Οφειλών σε Εφορία & Ασφαλιστικά Ταμεία",
   "url": "/rythmisi-ofeilon.html",
@@ -28,7 +20,7 @@
   "cat": "forologia"
  },
  {
-  "date": "2026-11-05",
+  "date": "2026-11-06",
   "foreas": "Επιδόματα Τώρα",
   "title": "Επίδομα Παιδιού Α21 — Νέα & Ανακοινώσεις",
   "url": "/epidoma-paidiou-a21.html",
@@ -38,7 +30,7 @@
   "cat": "paroxes"
  },
  {
-  "date": "2026-11-05",
+  "date": "2026-11-06",
   "foreas": "Επιδόματα Τώρα",
   "title": "Πληρωμές ΔΥΠΑ & e-ΕΦΚΑ — Ημερολόγιο Πληρωμών",
   "url": "/pliromes-dypa-efka.html",
@@ -46,6 +38,38 @@
   "auto": false,
   "top": false,
   "cat": "pliromes"
+ },
+ {
+  "date": "2026-11-06",
+  "foreas": "ΟΠΕΚΑ",
+  "title": "ΟΠΕΚΑ: Η διασφάλιση της υγείας των μαθητών είναι αδιαπραγμάτευτη – Κάθε καταγγελία για τα Σχολικά Γεύματα ελέγχεται",
+  "url": "https://opeka.gov.gr/opeka-i-diasfalisi-tis-ygeias-ton-mathiton-einai-adiapragmateyti-kathe-kataggelia-gia-ta-scholika-geymata/",
+  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
+  "auto": true
+ },
+ {
+  "date": "2026-11-06",
+  "foreas": "Υπουργείο Ανάπτυξης",
+  "title": "Τάκης Θεοδωρικάκος: «Η καλύτερη κοινωνική πολιτική είναι η δημιουργία νέων θέσεων εργασίας και αυτό κάνουμε»",
+  "url": "https://www.mindev.gov.gr/takis-theodorikakos-h-kalyterh-koinwnikh-politikh-einai-h-dhmiourgia-newn-thesewn-ergasias-kai-auto-kanoume/",
+  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
+  "auto": true
+ },
+ {
+  "date": "2026-11-06",
+  "foreas": "Υπουργείο Παιδείας",
+  "title": "06-11-26 ΥΠΟΒΟΛΗ ΑΙΤΗΣΕΩΝ ΥΠΟΨΗΦΙΩΝ ΔΙΔΑΣΚΟΝΤΩΝ ΣΤΗΝ ΕΝΙΣΧΥΤΙΚΗ ΔΙΔΑΣΚΑΛΙΑ ΓΥΜΝΑΣΙΟΥ 2026-2027",
+  "url": "https://www.minedu.gov.gr/?view=article&id=71122:06-11-26-ypobole-aiteseon-ypopsephion-didaskonton-sten-enischytike-didaskalia-gymnasiou-2026-2027&catid=2082",
+  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
+  "auto": true
+ },
+ {
+  "date": "2026-11-06",
+  "foreas": "Υπουργείο Παιδείας",
+  "title": "05-11-26 Σοφία Ζαχαράκη: 1,89 εκατ. ευρώ στο Ιόνιο Πανεπιστήμιο για το φοιτητικό στεγαστικό επίδομα",
+  "url": "https://www.minedu.gov.gr/?view=article&id=71114:05-11-26-sophia-zacharake-1-89-ekat-euro-sto-ionio-panepistemio-gia-to-phoitetiko-stegastiko-epidoma&catid=1183",
+  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
+  "auto": true
  },
  {
   "date": "2026-11-04",
@@ -140,14 +164,6 @@
   "foreas": "Υπουργείο Ανάπτυξης",
   "title": "Σταύρος Καλαφάτης: «Προτεραιότητά μας είναι η πολιτική σταθερότητα και η συνέχιση των αναγκαίων μεταρρυθμίσεων προς όφελος της χώρας»",
   "url": "https://www.mindev.gov.gr/stavros-kalafaths-proteraiothta-mas-einai-h-politikh-statherothta-kai-h-synexish-twn-anagkaiwn-metarrythmisewn-pros-ofelos-ths-xwras/",
-  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
-  "auto": true
- },
- {
-  "date": "2026-10-24",
-  "foreas": "Υπουργείο Ανάπτυξης",
-  "title": "Τάκης Θεοδωρικάκος: «Η καλύτερη κοινωνική πολιτική είναι νέες θέσεις εργασίας που δημιουργούνται μέσα από τις επενδύσεις»",
-  "url": "https://www.mindev.gov.gr/takis-theodorikakos-h-kalyterh-koinwnikh-politikh-einai-nees-theseis-ergassias-poy-dhmiourgountai-mesa-apo-tis-ependyseis/",
   "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
   "auto": true
  },
