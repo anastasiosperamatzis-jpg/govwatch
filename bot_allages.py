@@ -24,7 +24,7 @@ def main(fetch=None, send=R.send_telegram, reg=None):
         return 0, 0
     if fetch is None:
         import requests
-        fetch = lambda u: requests.get(u, headers=UA, timeout=30).text
+        fetch = lambda u: requests.get(u, headers=UA, timeout=10).text
     reg = reg or R.connect()
     old = json.load(open(HASHES, encoding="utf-8")) if os.path.exists(HASHES) else {}
     new, changed = dict(old), []
