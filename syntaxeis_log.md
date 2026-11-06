@@ -536,3 +536,5 @@
   https://news.google.com/rss/articles/CBMingFBVV95cUxPeXd4dmhmOHVTRXh5QmZZS3o3Yk5zRV82ZS0tVkJEZU9oT29WNTg0Y1h0alBBd01lUHZlNHExZzZKQnlTVS04Q2swOTRkQUg2RGttLUt5LXRhX1RzRlgtc0JJUFVtWG1KRGxteXVmTGYwSURQSGNER3dHN3duV3FNdjlQTDdXM09fOE1MRlEyTnB3cmFYMlY0am1WOUNTZw?oc=5
 - 06/11/2026 20:12 · **Ειδήσεις: Εφορία** · ΕΝΦΙΑ: Άλλοι πλήρωναν 13 χρόνια και άλλοι μπορούν να γλιτώσουν τα αναδρομικά! Η ρύθμιση που ανοίγει θέμα φορολογικής δικαιοσύνης - Kefalonia Magazine
   https://news.google.com/rss/articles/CBMiqwFBVV95cUxNbFlsVGxRTDFTS2VZRTFRLUtnTFZoQ3NHRTR3cG1JNEQxQVU3dHlEVWsyX2kyNXZpNWJqTnA2TnpSODJHRTg5MFNYUi10dzJ2LXdFY0xnc3A0U2RjUVJRMklEMWJKX29ZdHpJWW03eC1tUHFhV2FKLUdkdENId0ZlRWg3Y2Z3c29nM3lOdEJEMU93em9aMmZ0cmo3WTh0NmVsbVViTENUdFczN2M?oc=5
+- 07/11/2026 01:08 · **Ειδήσεις: Εφορία** · Νέα ρύθμιση χρεών: Έως 120 δόσεις για Εφορία και ασφαλιστικά - Ολύμπιο Βήμα
+  https://news.google.com/rss/articles/CBMijgFBVV95cUxNSnlIMlJBYlRCNVFJMVVCcXJCckp2YjFrMU9iazgwcC1pYUM2TUZ1NFE0dVg4b1lRaTMxN0Q5TkNlQzhmbm5CRmhLV0thMWFQSUVVVzk0bGRiWkhpa1ptajl4akdtSVcwVXZ1TVJ3LURfQzd4QjlMRExlbGNjdkJxRVgydVd1TzFhejRzeU5R?oc=5
