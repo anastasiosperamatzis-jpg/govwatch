@@ -540,3 +540,7 @@
   https://news.google.com/rss/articles/CBMijgFBVV95cUxNSnlIMlJBYlRCNVFJMVVCcXJCckp2YjFrMU9iazgwcC1pYUM2TUZ1NFE0dVg4b1lRaTMxN0Q5TkNlQzhmbm5CRmhLV0thMWFQSUVVVzk0bGRiWkhpa1ptajl4akdtSVcwVXZ1TVJ3LURfQzd4QjlMRExlbGNjdkJxRVgydVd1TzFhejRzeU5R?oc=5
 - 08/11/2026 04:38 · **Ειδήσεις: Εφορία** · Διορθώσεις στο Ε9 χωρίς αναδρομικό ΕΝΦΙΑ για χιλιάδες ιδιοκτήτες - Alphafreepress.gr
   https://news.google.com/rss/articles/CBMipAFBVV95cUxPcllYZFo3QVNxdmRRelJvUi1VZWVjMzBTR2V2eFBKZG5NLTFhU2M2YWo3bFhzR3lhcnhuYVR4aU5TbWFZN0FUdmNBWmlZYlV3U3hNQjRWYkpXald0dk5UWTB5OTFRS3hHY0xFLXQybFpOMjVpRUc4N09KUVEzOGJuWEN4UkM5NGZia1Z6M0dKWm8yUU12M3N3bGI3Q1lsdEFTTUhNONIBpAFBVV95cUxPcllYZFo3QVNxdmRRelJvUi1VZWVjMzBTR2V2eFBKZG5NLTFhU2M2YWo3bFhzR3lhcnhuYVR4aU5TbWFZN0FUdmNBWmlZYlV3U3hNQjRWYkpXald0dk5UWTB5OTFRS3hHY0xFLXQybFpOMjVpRUc4N09KUVEzOGJuWEN4UkM5NGZia1Z6M0dKWm8yUU12M3N3bGI3Q1lsdEFTTUhNOA?oc=5
+- 10/11/2026 14:59 · **e-ΕΦΚΑ Εγκύκλιοι** · 10 Νοε 2026 Γενικό Έγγραφο Teaser Description Ημερομηνία αναζήτησης των 600 ημερών ή δύο (2) ετών ασφάλισης για τη συνταξιοδότηση λόγω αναπηρίας από κοινή νόσο.
+  https://www.e-efka.gov.gr/el/egkyklioi-kai-genika-eggrafa/geniko-eggrafo-1
+- 10/11/2026 14:59 · **e-ΕΦΚΑ Εγκύκλιοι** · 09 Νοε 2026 Εγκύκλιος 24/2026 Teaser Description Εγκύκλιος 24/2026: Έναρξη λειτουργίας της Ηλεκτρονικής Υπηρεσίας Υποβολής Αίτησης - Διακρατική Ασφάλιση
+  https://www.e-efka.gov.gr/el/egkyklioi-kai-genika-eggrafa/egkyklios-242026
