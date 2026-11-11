@@ -488,10 +488,26 @@ def run_once(only_fast=False):
         return hit
 
     for src in sources:
+        t0 = time.perf_counter()
         try:
             items = fetch_items(src)
         except Exception as e:
-            print(f"[!] {src['name']}: {e}")
+            dt = time.perf_counter() - t0
+            # ΔΙΟΡΘΩΣΗ 11/11 (3ο πέρασμα): το "Connection aborted"/"403" από μόνο του δεν
+            # αποδεικνύει ΤΙ αποκλείει (IP/ASN, header, redirect loop, κλπ.) — καταγράφουμε
+            # ό,τι στοιχείο έχουμε πραγματικά διαθέσιμο (status, headers απόκρισης, redirect
+            # chain, χρόνος μέχρι την αποτυχία) ώστε η επόμενη πραγματική εκτέλεση να δώσει
+            # αποδεικτικά στοιχεία αντί για εικασία.
+            resp = getattr(e, "response", None)
+            if resp is not None:
+                redirs = " -> ".join(h.url for h in resp.history) if resp.history else "καμία"
+                print(f"[!] {src['name']}: {e} "
+                      f"[status={resp.status_code} server={resp.headers.get('Server', '?')} "
+                      f"cf-ray={resp.headers.get('CF-RAY', '—')} "
+                      f"retry-after={resp.headers.get('Retry-After', '—')} "
+                      f"redirects={redirs} χρόνος={dt:.1f}s]")
+            else:
+                print(f"[!] {src['name']}: {e} [χρόνος μέχρι αποτυχία={dt:.1f}s]")
             continue
         first_run = con.execute("SELECT COUNT(*) FROM items WHERE source=?",
                                 (src["name"],)).fetchone()[0] == 0
@@ -564,6 +580,12 @@ def run_once(only_fast=False):
             check_stalled_sources(con, sources)
         except Exception as e:
             print("[!] Έλεγχος κολλημένων πηγών:", e)
+    if os.getenv("GOVWATCH_DRY_RUN") == "1":
+        # ΔΙΟΡΘΩΣΗ 11/11 (3ο πέρασμα): επιτρέπει πραγματική εκτέλεση (πραγματικό δίκτυο,
+        # πραγματικό runner) χωρίς deploy στο live site — ώστε μια διόρθωση πηγής να
+        # ελέγχεται μέσω workflow_dispatch σε branch χωρίς κανένα ρίσκο για production.
+        print("🧪 GOVWATCH_DRY_RUN=1 — παραλείπεται το publish()/deploy. Δεν αγγίχθηκε το live site.")
+        return
     try:
         publish()
     except Exception as e:
