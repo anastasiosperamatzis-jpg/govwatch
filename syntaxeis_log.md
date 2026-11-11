@@ -544,3 +544,5 @@
   https://www.e-efka.gov.gr/el/egkyklioi-kai-genika-eggrafa/geniko-eggrafo-1
 - 10/11/2026 14:59 · **e-ΕΦΚΑ Εγκύκλιοι** · 09 Νοε 2026 Εγκύκλιος 24/2026 Teaser Description Εγκύκλιος 24/2026: Έναρξη λειτουργίας της Ηλεκτρονικής Υπηρεσίας Υποβολής Αίτησης - Διακρατική Ασφάλιση
   https://www.e-efka.gov.gr/el/egkyklioi-kai-genika-eggrafa/egkyklios-242026
+- 11/11/2026 17:32 · **Ειδήσεις: Εφορία** · Έκανε μία αλλαγή στον συνταξιοδοτικό λογαριασμό του και γλίτωσε πάνω από 300.000 δολάρια από την εφορία - Dnews
+  https://news.google.com/rss/articles/CBMi3wFBVV95cUxNRWxocjlUUW5WM0oxRWpUUkk5VE9MVjViN2FrdWdlVmxmREZqcWJFRWdtVjZWUGkzQnd0bURSQ2xwODNsSDd0MWo5UGxzZVZRSHRqUURLdG42ck9LaWdqSGtYWGdxUXhtLWdZYmtqM25LX1U4OEtzc2IwdjdxTVd1VE02Q2dTTldTUnBwLWs4OFhUMkdLRm5IU2JyNXV2QzNKTHdEalZxdzVSRDVUMmpPQ0tJMGc5dWNpdDlkanhMMGJraUt5TWliWUZLMGNpWUNGZXpBTl94bTNzckxaeEl3?oc=5
