@@ -1,0 +1,5 @@
+# ads.txt — epidomatatora.gr
+# ΠΡΟΣΟΧΗ: η γραμμή Google παρακάτω χρειάζεται το πραγματικό Publisher ID (pub-XXXXXXXXXXXXXXXX)
+# από τον λογαριασμό AdSense. Μέχρι να μπει το σωστό ID, ΑΥΤΟ ΤΟ ΑΡΧΕΙΟ ΔΕΝ ΕΙΝΑΙ ΕΓΚΥΡΟ
+# και το AdSense θα συνεχίσει να δείχνει «Δεν βρέθηκε».
+# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0

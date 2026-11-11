@@ -136,6 +136,20 @@ def clean_title(t):
     return re.sub(r"\s+[-–]\s+[^-–]{2,40}$", "", t).strip()
 
 
+# Λεκτικά-«σκουπίδια» που μερικές φορές μπαίνουν μέσα στο κείμενο του <a> μαζί με τον
+# πραγματικό τίτλο (π.χ. ετικέτες template που δεν φαίνονται στον χρήστη αλλά διαβάζονται
+# από το BeautifulSoup .get_text()). Αφαιρούνται πριν αποθηκευτεί ο τίτλος.
+TITLE_JUNK = [r"Teaser\s+Description", r"Read\s+more", r"Διαβάστε\s+περισσότερα"]
+
+
+def strip_title_junk(title):
+    """Καθαρίζει γνωστά «υπολείμματα» template από τον τίτλο (π.χ. 'Teaser Description')."""
+    t = title
+    for pat in TITLE_JUNK:
+        t = re.sub(pat, " ", t, flags=re.IGNORECASE)
+    return " ".join(t.split())
+
+
 def title_tokens(t):
     out = set()
     for x in re.findall(r"[a-zα-ω0-9]+", norm(clean_title(t))):
@@ -258,7 +272,7 @@ def fetch_items(src):
     else:
         soup = BeautifulSoup(r.content, "html.parser")
         for a in soup.select(src.get("selector", "a")):
-            title = " ".join(a.get_text().split())
+            title = strip_title_junk(" ".join(a.get_text().split()))
             href = a.get("href")
             if href and "redirect-banner" in href:
                 continue
@@ -398,6 +412,49 @@ def tg_setup():
     print("Έτοιμο! Έλεγξε το Telegram σου." if ok else "Αποθηκεύτηκε, αλλά το μήνυμα δεν στάλθηκε.")
 
 
+STALL_STATE_FILE = os.path.join(HERE, "stall_state.json")
+DEFAULT_STALL_DAYS = 10  # αν μια επίσημη πηγή δεν φέρει ΤΙΠΟΤΑ νέο για τόσες μέρες, θεωρείται "κολλημένη"
+
+
+def check_stalled_sources(con, sources):
+    """Ειδοποιεί (μία φορά/ημέρα, όχι σε κάθε κύκλο 15λεπτου) όταν μια επίσημη πηγή δεν έχει
+    φέρει ΚΑΝΕΝΑ νέο αντικείμενο για περισσότερες μέρες από το όριο της — σημάδι ότι ο selector
+    έσπασε ή το site άλλαξε, όχι ότι απλά δεν βγήκε ανακοίνωση."""
+    try:
+        with open(STALL_STATE_FILE, encoding="utf-8") as f:
+            state = json.load(f)
+    except Exception:
+        state = {}
+    today = datetime.now().strftime("%Y-%m-%d")
+    changed = False
+    for src in sources:
+        if src.get("private") or src.get("type") == "rss":
+            continue  # οι πηγές ειδήσεων/Ραντάρ φυσιολογικά έχουν ανομοιόμορφη ροή — δεν ελέγχονται
+        name = src["name"]
+        row = con.execute("SELECT MAX(first_seen) FROM items WHERE source=?", (name,)).fetchone()
+        last = row[0] if row else None
+        if not last:
+            continue
+        try:
+            last_dt = datetime.fromisoformat(last)
+        except ValueError:
+            continue
+        days_quiet = (datetime.now() - last_dt).days
+        limit = src.get("stall_days", DEFAULT_STALL_DAYS)
+        if days_quiet >= limit:
+            if state.get(name) != today:  # ειδοποίηση μία φορά/ημέρα όσο διαρκεί το "κόλλημα"
+                notify(f"⚠️ ΠΗΓΗ ΧΩΡΙΣ ΝΕΑ\n{name}: καμία νέα ανακοίνωση εδώ και {days_quiet} μέρες "
+                       f"(τελευταία: {last[:10]}).\nΈλεγξε αν άλλαξε η σελίδα ({src.get('url', '')}).")
+                state[name] = today
+                changed = True
+        elif name in state:
+            del state[name]  # ξαναήρθε κάτι νέο — καθαρό "reset" της ειδοποίησης
+            changed = True
+    if changed:
+        with open(STALL_STATE_FILE, "w", encoding="utf-8") as f:
+            json.dump(state, f, ensure_ascii=False, indent=2)
+
+
 def run_once(only_fast=False):
     """only_fast=True: ελέγχει μόνο τις πηγές για συντάξεις/νομοθεσία (fast: true)."""
     with open(os.path.join(HERE, "sources.json"), encoding="utf-8") as f:
@@ -499,6 +556,10 @@ def run_once(only_fast=False):
             update_popular()
         except Exception as e:
             print("[!] Δημοφιλή:", e)
+        try:
+            check_stalled_sources(con, sources)
+        except Exception as e:
+            print("[!] Έλεγχος κολλημένων πηγών:", e)
     try:
         publish()
     except Exception as e:
@@ -602,6 +663,26 @@ def write_site_json():
         try:
             with open(mpath, encoding="utf-8-sig") as f:
                 manual = [m for m in json.load(f) if m.get("date", "") >= since[:10]]
+            # ΔΙΟΡΘΩΣΗ 11/11: ένα "top": true στο manual.json δεν σβήνει ποτέ μόνο του, οπότε
+            # ληγμένες προθεσμίες (π.χ. «έως 30 Οκτωβρίου») έμεναν στο «ΣΗΜΑΝΤΙΚΟ ΤΩΡΑ» και μετά
+            # τη λήξη τους. Αυτόματο «σβήσιμο» του top: αν υπάρχει "expires" και έχει περάσει, ή
+            # αλλιώς αν το θέμα είναι πιο παλιό από TOP_MAX_AGE_DAYS μέρες.
+            TOP_MAX_AGE_DAYS = 15
+            today_str = datetime.now().strftime("%Y-%m-%d")
+            for m in manual:
+                if not m.get("top"):
+                    continue
+                expires = m.get("expires")
+                if expires:
+                    if expires < today_str:
+                        m["top"] = False
+                    continue
+                try:
+                    age_days = (datetime.now() - datetime.strptime(m["date"], "%Y-%m-%d")).days
+                except (KeyError, ValueError):
+                    age_days = 0
+                if age_days > TOP_MAX_AGE_DAYS:
+                    m["top"] = False
             urls = {m.get("url") for m in manual}
             data = sorted(manual + [d for d in data if d["url"] not in urls],
                           key=lambda d: d["date"], reverse=True)
@@ -820,10 +901,38 @@ def run_seo_prerender():
         print(f"[!] Site: generate_seo_pages σφάλμα ({e}) — συνεχίζω χωρίς αυτό.")
 
 
+def write_sitemap():
+    """Ξαναφτιάχνει το site/sitemap.xml ΑΥΤΟΜΑΤΑ από τα πραγματικά .html αρχεία που υπάρχουν
+    στο site/ — όχι χειροκίνητη λίστα που ξεχνιέται (ΔΙΟΡΘΩΣΗ 11/11: ήταν κολλημένη στις
+    01/10 με 23 URLs, ενώ το site έχει πλέον πολλές παραπάνω σελίδες επιδομάτων/ενοτήτων).
+    Προσθέτει και τις σταθερές σελίδες πληροφοριών (νομικό/επικοινωνία) που υπάρχουν μόνο ως
+    SPA-route (όχι ξεχωριστό .html αρχείο) αλλά είναι πραγματικές, ξεχωριστές σελίδες."""
+    base = "https://epidomatatora.gr"
+    urls = ["/"]
+    for root, _, files in sorted(os.walk(SITE)):
+        for fn in sorted(files):
+            if not fn.endswith(".html") or fn == "index.html":
+                continue
+            rel = os.path.relpath(os.path.join(root, fn), SITE)
+            urls.append("/" + rel[:-len(".html")].replace(os.sep, "/"))
+    for extra in ("/sxetika", "/aporrito", "/oroi", "/diafimisi"):  # μόνο SPA-route, χωρίς δικό τους .html
+        if extra not in urls:
+            urls.append(extra)
+    lines = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    today = datetime.now().strftime("%Y-%m-%d")
+    for u in urls:
+        lines.append(f"  <url><loc>{base}{u}</loc><lastmod>{today}</lastmod></url>")
+    lines.append("</urlset>")
+    with open(os.path.join(SITE, "sitemap.xml"), "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
+    print(f"🗺️ sitemap.xml: {len(urls)} URLs")
+
+
 def publish(force=False):
     """Ανεβάζει το site μόνο όταν υπάρχουν νέες ανακοινώσεις (ή με force)."""
     write_site_json()
     run_seo_prerender()
+    write_sitemap()
     h = hashlib.sha1()  # αποτύπωμα όλου του φακέλου site (ανακοινώσεις + σχέδιο)
     for root, _, files in sorted(os.walk(SITE)):
         for fn in sorted(files):
