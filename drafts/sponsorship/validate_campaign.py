@@ -13,7 +13,7 @@
 Χρήση:
   python3 validate_campaign.py                       # κατάσταση campaign-config.json, σήμερα
   python3 validate_campaign.py --as-of 2026-12-01     # με συγκεκριμένη ημερομηνία αναφοράς
-  python3 validate_campaign.py --self-test            # 5 σενάρια κατάστασης + 5 render HTML, χωρίς δίκτυο
+  python3 validate_campaign.py --self-test            # 14 σενάρια κατάστασης και HTML, χωρίς δίκτυο
   python3 validate_campaign.py --render-preview       # παράγει το HTML (hidden/ή escaped block) στο stdout
 """
 import argparse, html, json, os, re, sys
@@ -36,7 +36,7 @@ MAX_DURATION_DAYS = 30
 def today_athens():
     if ATHENS:
         return datetime.now(ATHENS).date()
-    return date.today()  # αν δεν υπάρχει zoneinfo στο περιβάλλον — τελευταία λύση
+    raise RuntimeError("Απαιτείται διαθέσιμη ζώνη ώρας Europe/Athens")
 
 
 def parse_date(s):
@@ -46,22 +46,25 @@ def parse_date(s):
 
 
 def is_safe_slug(slug):
-    return bool(slug) and bool(SLUG_RE.match(slug))
+    return isinstance(slug, str) and bool(SLUG_RE.fullmatch(slug))
 
 
 def is_valid_https_url(u):
     """Μόνο https, χωρίς credentials (user:pass@) στο URL."""
-    if not u:
+    if not isinstance(u, str) or not u or any(c.isspace() or ord(c) < 32 for c in u):
         return False
     try:
         p = urlparse(u)
+        hostname = p.hostname
+        _ = p.port  # η πρόσβαση ελέγχει και τη σύνταξη/το εύρος της θύρας
+        if p.scheme != "https" or not hostname or "." not in hostname:
+            return False
+        if p.username is not None or p.password is not None:
+            return False
+        labels = hostname.encode("idna").decode("ascii").rstrip(".").split(".")
+        return all(re.fullmatch(r"[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?", label) for label in labels)
     except Exception:
         return False
-    if p.scheme != "https" or not p.netloc or "." not in p.netloc:
-        return False
-    if p.username or p.password:
-        return False
-    return True
 
 
 def evaluate(campaign, as_of):
@@ -69,16 +72,20 @@ def evaluate(campaign, as_of):
     state ∈ {"ΚΡΥΦΗ", "ΚΡΥΦΗ/ΑΚΥΡΗ", "ΟΡΑΤΗ"}."""
     if campaign.get("active") is not True:  # αυστηρά boolean True, όχι "true"/1/κλπ.
         return "ΚΡΥΦΗ", "active δεν είναι boolean true (ανενεργό εξ ορισμού)"
-    start = parse_date(campaign.get("start_date"))
-    end = parse_date(campaign.get("end_date"))
+    try:
+        start = parse_date(campaign.get("start_date"))
+        end = parse_date(campaign.get("end_date"))
+    except (ValueError, TypeError):
+        return "ΚΡΥΦΗ/ΑΚΥΡΗ", "άκυρη ημερομηνία"
     if end is None:
         return "ΚΡΥΦΗ/ΑΚΥΡΗ", "λείπει end_date — υποχρεωτικό"
     if start is None:
         return "ΚΡΥΦΗ/ΑΚΥΡΗ", "λείπει start_date — υποχρεωτικό"
     if start > end:
         return "ΚΡΥΦΗ/ΑΚΥΡΗ", f"start_date ({start}) μετά το end_date ({end})"
-    if (end - start).days > MAX_DURATION_DAYS:
-        return "ΚΡΥΦΗ/ΑΚΥΡΗ", f"διάρκεια {(end - start).days} ημερών > {MAX_DURATION_DAYS} μέγιστο"
+    duration = (end - start).days + 1  # και η πρώτη και η τελευταία ημέρα είναι ενεργές
+    if duration > MAX_DURATION_DAYS:
+        return "ΚΡΥΦΗ/ΑΚΥΡΗ", f"διάρκεια {duration} ημερών > {MAX_DURATION_DAYS} μέγιστο"
     if as_of < start:
         return "ΚΡΥΦΗ", f"μελλοντική έναρξη ({start.isoformat()} > σήμερα {as_of.isoformat()})"
     if as_of > end:
@@ -90,7 +97,7 @@ def evaluate(campaign, as_of):
     return "ΟΡΑΤΗ", f"active=true, εντός περιόδου ({start}–{end}, ≤{MAX_DURATION_DAYS}ημ), έγκυρο https URL, ασφαλές slug"
 
 
-HIDDEN_HTML = "<!-- sponsor-slot: καμία ενεργή διαφήμιση σήμερα ({reason}) -->\n"
+HIDDEN_HTML = "<!-- sponsor-slot: καμία ενεργή διαφήμιση σήμερα -->\n"
 
 
 def render_preview(campaign, as_of, template_path=DEFAULT_TEMPLATE):
@@ -99,7 +106,7 @@ def render_preview(campaign, as_of, template_path=DEFAULT_TEMPLATE):
     η καμπάνια είναι πράγματι έγκυρη και ενεργή. ΔΕΝ γράφει πουθενά."""
     state, reason = evaluate(campaign, as_of)
     if state != "ΟΡΑΤΗ":
-        return HIDDEN_HTML.format(reason=reason), state, reason
+        return HIDDEN_HTML, state, reason
     with open(template_path, encoding="utf-8") as f:
         tpl = f.read()
     # Αφαιρεί το εσωτερικό σχόλιο οδηγιών (<!-- ... -->) στην αρχή του template —
@@ -115,20 +122,26 @@ def render_preview(campaign, as_of, template_path=DEFAULT_TEMPLATE):
 
 
 def run_self_test():
-    """5 σενάρια κατάστασης + αντίστοιχο render HTML, χωρίς αρχεία/δίκτυο."""
+    """14 σενάρια κατάστασης και αντίστοιχου HTML, χωρίς δίκτυο."""
     today = date(2026, 11, 11)
     base = {"slug": "sponsor-a", "sponsor_name": "<Σπόνσορας> & Co",
             "sponsor_description": "περιγραφή", "start_date": "2026-11-01",
             "end_date": "2026-11-30", "target_url": "https://sponsor-example.gr/"}
     cases = [
         ("ανενεργό", {**base, "active": False}, "ΚΡΥΦΗ"),
-        ("μελλοντικό", {**base, "active": True, "start_date": "2027-01-01", "end_date": "2027-01-31"}, "ΚΡΥΦΗ"),
+        ("μελλοντικό", {**base, "active": True, "start_date": "2027-01-01", "end_date": "2027-01-30"}, "ΚΡΥΦΗ"),
         ("ενεργό", {**base, "active": True}, "ΟΡΑΤΗ"),
         ("ληγμένο", {**base, "active": True, "start_date": "2026-09-01", "end_date": "2026-09-30"}, "ΚΡΥΦΗ"),
         ("άκυρη διεύθυνση (http, όχι https)", {**base, "active": True, "target_url": "http://sponsor-example.gr/"}, "ΚΡΥΦΗ/ΑΚΥΡΗ"),
         ("credentials στο URL", {**base, "active": True, "target_url": "https://u:p@sponsor-example.gr/"}, "ΚΡΥΦΗ/ΑΚΥΡΗ"),
         ("διάρκεια > 30 ημέρες", {**base, "active": True, "start_date": "2026-11-01", "end_date": "2026-12-15"}, "ΚΡΥΦΗ/ΑΚΥΡΗ"),
         ("μη ασφαλές slug", {**base, "active": True, "slug": "../etc"}, "ΚΡΥΦΗ/ΑΚΥΡΗ"),
+        ("active string", {**base, "active": "true"}, "ΚΡΥΦΗ"),
+        ("active integer", {**base, "active": 1}, "ΚΡΥΦΗ"),
+        ("άκυρη ημερομηνία", {**base, "active": True, "end_date": "2026-11-31"}, "ΚΡΥΦΗ/ΑΚΥΡΗ"),
+        ("31 συμπεριλαμβανόμενες ημέρες", {**base, "active": True, "end_date": "2026-12-01"}, "ΚΡΥΦΗ/ΑΚΥΡΗ"),
+        ("άκυρο port", {**base, "active": True, "target_url": "https://example.org:bad/"}, "ΚΡΥΦΗ/ΑΚΥΡΗ"),
+        ("HTML σε άκυρο URL", {**base, "active": True, "target_url": "--><script>alert(1)</script>"}, "ΚΡΥΦΗ/ΑΚΥΡΗ"),
     ]
     ok = True
     for label, cfg, expected in cases:
@@ -140,7 +153,7 @@ def run_self_test():
         if r_state == "ΟΡΑΤΗ":
             html_ok = "<section" in rendered and "<script" not in rendered and "&lt;Σπόνσορας&gt;" in rendered
         else:
-            html_ok = rendered.startswith("<!-- sponsor-slot: καμία ενεργή διαφήμιση")
+            html_ok = rendered == HIDDEN_HTML and "<script" not in rendered
         ok = ok and html_ok
         print(f"       render: {'OK' if html_ok else 'ΛΑΘΟΣ'} -> {rendered.strip().splitlines()[0][:70]}")
     print("\nΌλα τα σενάρια (κατάσταση + render):", "PASS" if ok else "FAIL")
@@ -183,3 +196,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+
