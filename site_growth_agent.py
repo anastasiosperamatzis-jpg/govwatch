@@ -114,7 +114,7 @@ THEMES = [
 
 # Το ΜΟΝΑΔΙΚΟ σύνολο URLs που επιτρέπεται στον Agent 2 να δημιουργήσει/αλλάξει μέσα
 # στο manual.json — καμία άλλη εγγραφή (χειροκίνητη ή άλλου bot) δεν αγγίζεται ποτέ.
-AGENT2_URLS = {f"/{t['slug']}.html" for t in THEMES}
+AGENT2_URLS = {f"/{t['slug']}" for t in THEMES}  # ΔΙΟΡΘΩΣΗ 11/11: καθαρό URL χωρίς .html
 
 
 def norm(s):
@@ -190,7 +190,12 @@ def esc(s):
 
 
 def build_page_html(theme, items):
-    url = f"{SITE_URL}/{theme['slug']}.html"
+    # ΔΙΟΡΘΩΣΗ 11/11: το canonical/og:url ήταν με κατάληξη .html — διαφορετικό από το
+    # καθαρό URL που δείχνει το sitemap.xml και από κάθε άλλη σελίδα του site, γεγονός
+    # που μπέρδευε τη Google (δύο «σωστά» URLs για την ίδια σελίδα). Το ίδιο το αρχείο
+    # γράφεται ακόμα ως {slug}.html στο δίσκο — το Cloudflare Pages σερβίρει μόνο του
+    # το καθαρό /{slug} σε αυτό το αρχείο.
+    url = f"{SITE_URL}/{theme['slug']}"
     updated = datetime.now().strftime("%d/%m/%Y")
     rows = []
     for it in items[:MAX_ITEMS_PER_PAGE]:
@@ -326,7 +331,7 @@ def backup_page(slug):
 def upsert_manual(theme, n_items):
     """Προσθέτει/ενημερώνει ΜΟΝΟ τη δική του εγγραφή (url στο AGENT2_URLS).
     Ποτέ δεν αγγίζει εγγραφή που δεν του ανήκει."""
-    url = f"/{theme['slug']}.html"
+    url = f"/{theme['slug']}"  # ΔΙΟΡΘΩΣΗ 11/11: ίδιο καθαρό URL με το canonical/sitemap
     assert url in AGENT2_URLS, f"BUG: ο Agent 2 προσπάθησε να γράψει URL εκτός του δικού του scope: {url}"
 
     items = load_manual()
@@ -388,7 +393,7 @@ def run():
 
         touched.append((theme, len(matches), action))
         verb = "Ανανεώθηκε" if existed else "✨ Δημιουργήθηκε νέα σελίδα"
-        report_lines.append(f"- {verb}: **{theme['nav']}** — {len(matches)} ανακοινώσεις — /{theme['slug']}.html")
+        report_lines.append(f"- {verb}: **{theme['nav']}** — {len(matches)} ανακοινώσεις — /{theme['slug']}")
 
     if not touched:
         report_lines.append("- Καμία αλλαγή (δεν υπήρχαν αρκετές έγκυρες ανακοινώσεις ανά θέμα).")
@@ -443,7 +448,7 @@ def build_email_report(touched, deploy_ok, backend, error_detail=None):
     if touched:
         for theme, n, action in touched:
             verb = "✨ νέα σελίδα" if action == "created" else "↻ ανανεώθηκε"
-            lines.append(f"   • {theme['nav']} — {verb} ({n} ανακοινώσεις) — /{theme['slug']}.html")
+            lines.append(f"   • {theme['nav']} — {verb} ({n} ανακοινώσεις) — /{theme['slug']}")
     else:
         lines.append("   • Καμία αλλαγή σήμερα (δεν υπήρχαν αρκετές νέες έγκυρες ανακοινώσεις ανά θέμα).")
 

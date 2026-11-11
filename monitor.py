@@ -443,10 +443,14 @@ def check_stalled_sources(con, sources):
         limit = src.get("stall_days", DEFAULT_STALL_DAYS)
         if days_quiet >= limit:
             if state.get(name) != today:  # ειδοποίηση μία φορά/ημέρα όσο διαρκεί το "κόλλημα"
-                notify(f"⚠️ ΠΗΓΗ ΧΩΡΙΣ ΝΕΑ\n{name}: καμία νέα ανακοίνωση εδώ και {days_quiet} μέρες "
-                       f"(τελευταία: {last[:10]}).\nΈλεγξε αν άλλαξε η σελίδα ({src.get('url', '')}).")
-                state[name] = today
-                changed = True
+                ok = notify(f"⚠️ ΠΗΓΗ ΧΩΡΙΣ ΝΕΑ\n{name}: καμία νέα ανακοίνωση εδώ και {days_quiet} μέρες "
+                            f"(τελευταία: {last[:10]}).\nΈλεγξε αν άλλαξε η σελίδα ({src.get('url', '')}).")
+                # ΔΙΟΡΘΩΣΗ: καταγράφεται ως σταλμένη ΜΟΝΟ όταν το notify() πέτυχε πραγματικά —
+                # αλλιώς μια αποτυχημένη αποστολή (π.χ. πρόβλημα Telegram) θα σημειωνόταν σαν
+                # «ειδοποιήθηκε σήμερα» και δεν θα ξαναδοκιμαζόταν για 24 ώρες.
+                if ok:
+                    state[name] = today
+                    changed = True
         elif name in state:
             del state[name]  # ξαναήρθε κάτι νέο — καθαρό "reset" της ειδοποίησης
             changed = True
@@ -665,12 +669,27 @@ def write_site_json():
                 manual = [m for m in json.load(f) if m.get("date", "") >= since[:10]]
             # ΔΙΟΡΘΩΣΗ 11/11: ένα "top": true στο manual.json δεν σβήνει ποτέ μόνο του, οπότε
             # ληγμένες προθεσμίες (π.χ. «έως 30 Οκτωβρίου») έμεναν στο «ΣΗΜΑΝΤΙΚΟ ΤΩΡΑ» και μετά
-            # τη λήξη τους. Αυτόματο «σβήσιμο» του top: αν υπάρχει "expires" και έχει περάσει, ή
-            # αλλιώς αν το θέμα είναι πιο παλιό από TOP_MAX_AGE_DAYS μέρες.
+            # τη λήξη τους. Αυτόματο «σβήσιμο» του top, με αυτή τη σειρά προτίμησης:
+            #   1) "deadline": η πραγματική προθεσμία που αναφέρει η ανακοίνωση (π.χ. η ημέρα
+            #      που λήγει η αίτηση) — σβήνει την ΕΠΟΜΕΝΗ μέρα μετά τη λήξη της, ώρα Ελλάδας,
+            #      ώστε το θέμα να παραμένει «σημαντικό τώρα» όσο είναι ακόμα πράξιμο.
+            #   2) "expires": γενική ημερομηνία παύσης προβολής, όταν δεν υπάρχει ή δεν ταιριάζει
+            #      ένα μόνο "deadline" (π.χ. θέμα σημαντικό «μέχρι τέλος μήνα» χωρίς αίτηση).
+            #   3) αλλιώς, εφεδρικό όριο TOP_MAX_AGE_DAYS μερών από τη δημοσίευση.
             TOP_MAX_AGE_DAYS = 15
-            today_str = datetime.now().strftime("%Y-%m-%d")
+            try:
+                from zoneinfo import ZoneInfo
+                now_gr = datetime.now(ZoneInfo("Europe/Athens"))
+            except Exception:
+                now_gr = datetime.now()  # fallback αν λείπει tzdata — ο runner έχει ήδη TZ=Europe/Athens
+            today_str = now_gr.strftime("%Y-%m-%d")
             for m in manual:
                 if not m.get("top"):
+                    continue
+                deadline = m.get("deadline")
+                if deadline:
+                    if deadline < today_str:
+                        m["top"] = False
                     continue
                 expires = m.get("expires")
                 if expires:
@@ -678,7 +697,7 @@ def write_site_json():
                         m["top"] = False
                     continue
                 try:
-                    age_days = (datetime.now() - datetime.strptime(m["date"], "%Y-%m-%d")).days
+                    age_days = (now_gr.date() - datetime.strptime(m["date"], "%Y-%m-%d").date()).days
                 except (KeyError, ValueError):
                     age_days = 0
                 if age_days > TOP_MAX_AGE_DAYS:
@@ -901,27 +920,65 @@ def run_seo_prerender():
         print(f"[!] Site: generate_seo_pages σφάλμα ({e}) — συνεχίζω χωρίς αυτό.")
 
 
+SITEMAP_LASTMOD_FILE = os.path.join(HERE, "sitemap_lastmod.json")
+
+
 def write_sitemap():
     """Ξαναφτιάχνει το site/sitemap.xml ΑΥΤΟΜΑΤΑ από τα πραγματικά .html αρχεία που υπάρχουν
     στο site/ — όχι χειροκίνητη λίστα που ξεχνιέται (ΔΙΟΡΘΩΣΗ 11/11: ήταν κολλημένη στις
     01/10 με 23 URLs, ενώ το site έχει πλέον πολλές παραπάνω σελίδες επιδομάτων/ενοτήτων).
     Προσθέτει και τις σταθερές σελίδες πληροφοριών (νομικό/επικοινωνία) που υπάρχουν μόνο ως
-    SPA-route (όχι ξεχωριστό .html αρχείο) αλλά είναι πραγματικές, ξεχωριστές σελίδες."""
+    SPA-route (όχι ξεχωριστό .html αρχείο) αλλά είναι πραγματικές, ξεχωριστές σελίδες.
+
+    ΔΙΟΡΘΩΣΗ 11/11 (2ο πέρασμα): το lastmod ΔΕΝ είναι πια η σημερινή ημερομηνία σε κάθε
+    εκτέλεση — αυτό έκανε το sitemap αναξιόπιστο για τη Google (κάθε σελίδα φαινόταν
+    «άλλαξε σήμερα» ακόμα και όταν δεν άλλαξε τίποτα). Κρατάμε persisted ανά-URL hash
+    περιεχομένου σε sitemap_lastmod.json (committed στο git) και το lastmod προχωράει
+    ΜΟΝΟ όταν το hash μιας σελίδας πραγματικά αλλάξει (ή είναι καινούργια)."""
     base = "https://epidomatatora.gr"
     urls = ["/"]
+    file_for_url = {"/": os.path.join(SITE, "index.html")}
     for root, _, files in sorted(os.walk(SITE)):
         for fn in sorted(files):
             if not fn.endswith(".html") or fn == "index.html":
                 continue
-            rel = os.path.relpath(os.path.join(root, fn), SITE)
-            urls.append("/" + rel[:-len(".html")].replace(os.sep, "/"))
+            full = os.path.join(root, fn)
+            rel = os.path.relpath(full, SITE)
+            u = "/" + rel[:-len(".html")].replace(os.sep, "/")
+            urls.append(u)
+            file_for_url[u] = full
     for extra in ("/sxetika", "/aporrito", "/oroi", "/diafimisi"):  # μόνο SPA-route, χωρίς δικό τους .html
         if extra not in urls:
             urls.append(extra)
-    lines = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+            file_for_url[extra] = os.path.join(SITE, "index.html")  # περιεχόμενό τους = το SPA shell
+
+    try:
+        with open(SITEMAP_LASTMOD_FILE, encoding="utf-8") as f:
+            state = json.load(f)
+    except Exception:
+        state = {}
+
     today = datetime.now().strftime("%Y-%m-%d")
+    new_state = {}
     for u in urls:
-        lines.append(f"  <url><loc>{base}{u}</loc><lastmod>{today}</lastmod></url>")
+        fpath = file_for_url.get(u)
+        digest = None
+        if fpath and os.path.isfile(fpath):
+            with open(fpath, "rb") as f:
+                digest = hashlib.sha1(f.read()).hexdigest()
+        prev = state.get(u) or {}
+        if digest and prev.get("hash") == digest and prev.get("lastmod"):
+            new_state[u] = prev  # ίδιο περιεχόμενο — κρατάμε την παλιά ημερομηνία
+        else:
+            new_state[u] = {"hash": digest, "lastmod": today}
+    state = new_state
+    with open(SITEMAP_LASTMOD_FILE, "w", encoding="utf-8") as f:
+        json.dump(state, f, ensure_ascii=False, indent=1, sort_keys=True)
+
+    lines = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for u in urls:
+        lastmod = state.get(u, {}).get("lastmod", today)
+        lines.append(f"  <url><loc>{base}{u}</loc><lastmod>{lastmod}</lastmod></url>")
     lines.append("</urlset>")
     with open(os.path.join(SITE, "sitemap.xml"), "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
