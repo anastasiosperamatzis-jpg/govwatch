@@ -28,6 +28,9 @@ jobs:
 
       - run: pip install -r requirements.txt
 
+      - name: Run tests (δοκιμές 11/11 — deadline/expiry, notify-gating, sitemap lastmod)
+        run: python test_monitor_fixes.py
+
       - name: Write secret files
         env:
           TELEGRAM_TXT: ${{ secrets.TELEGRAM_TXT }}

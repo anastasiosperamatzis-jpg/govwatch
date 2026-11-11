@@ -628,6 +628,52 @@ def netlify_config():
     return None, DEFAULT_SITE
 
 
+try:
+    from zoneinfo import ZoneInfo
+    GR_TZ = ZoneInfo("Europe/Athens")
+except Exception:
+    GR_TZ = None  # fallback αν λείπει tzdata — ο runner έχει ήδη TZ=Europe/Athens
+
+TOP_MAX_AGE_DAYS = 15
+
+
+def parse_cutoff_gr(value):
+    """'YYYY-MM-DD' -> τέλος εκείνης της μέρας (23:59:59) ώρα Ελλάδας.
+    'YYYY-MM-DDTHH:MM[:SS]' -> ακριβής στιγμή, ώρα Ελλάδας.
+    Επιστρέφει aware datetime ή None αν δεν αναγνωρίζεται."""
+    try:
+        if "T" in value:
+            dt = datetime.fromisoformat(value)
+            return dt.replace(tzinfo=GR_TZ) if GR_TZ and dt.tzinfo is None else dt
+        d = datetime.strptime(value, "%Y-%m-%d")
+        d = d.replace(hour=23, minute=59, second=59)
+        return d.replace(tzinfo=GR_TZ) if GR_TZ else d
+    except (ValueError, TypeError):
+        return None
+
+
+def apply_top_expiry(manual, now_gr):
+    """Σβήνει το 'top' των ληγμένων θεμάτων, in-place, με αυτή τη σειρά προτίμησης:
+    1) 'deadline' (ακριβής προθεσμία αίτησης), 2) 'expires' (γενική παύση προβολής),
+    3) εφεδρικό όριο TOP_MAX_AGE_DAYS ημερών από τη δημοσίευση.
+    Εξαγόμενο σε ξεχωριστή συνάρτηση ώστε να ελέγχεται χωρίς να τρέχει όλο το write_site_json()
+    (βλ. test_monitor_fixes.py)."""
+    for m in manual:
+        if not m.get("top"):
+            continue
+        cutoff = parse_cutoff_gr(m.get("deadline") or "") or parse_cutoff_gr(m.get("expires") or "")
+        if cutoff:
+            if now_gr > cutoff:
+                m["top"] = False
+            continue
+        try:
+            age_days = (now_gr.date() - datetime.strptime(m["date"], "%Y-%m-%d").date()).days
+        except (KeyError, ValueError):
+            age_days = 0
+        if age_days > TOP_MAX_AGE_DAYS:
+            m["top"] = False
+
+
 def write_site_json():
     """Γράφει site/anakoinoseis.json με τις πράσινες/κίτρινες ανακοινώσεις 45 ημερών.
     Επιστρέφει True αν άλλαξε κάτι."""
@@ -679,42 +725,8 @@ def write_site_json():
             #   2) "expires": γενική ημερομηνία/ώρα παύσης προβολής, ίδια μορφή, όταν δεν
             #      υπάρχει "deadline" (π.χ. θέμα σημαντικό «μέχρι τέλος μήνα» χωρίς αίτηση).
             #   3) αλλιώς, εφεδρικό όριο TOP_MAX_AGE_DAYS μερών από τη δημοσίευση.
-            TOP_MAX_AGE_DAYS = 15
-            try:
-                from zoneinfo import ZoneInfo
-                GR_TZ = ZoneInfo("Europe/Athens")
-            except Exception:
-                GR_TZ = None  # fallback αν λείπει tzdata — ο runner έχει ήδη TZ=Europe/Athens
             now_gr = datetime.now(GR_TZ) if GR_TZ else datetime.now()
-
-            def parse_cutoff_gr(value):
-                """'YYYY-MM-DD' -> τέλος εκείνης της μέρας (23:59:59) ώρα Ελλάδας.
-                'YYYY-MM-DDTHH:MM[:SS]' -> ακριβής στιγμή, ώρα Ελλάδας.
-                Επιστρέφει aware datetime ή None αν δεν αναγνωρίζεται."""
-                try:
-                    if "T" in value:
-                        dt = datetime.fromisoformat(value)
-                        return dt.replace(tzinfo=GR_TZ) if GR_TZ and dt.tzinfo is None else dt
-                    d = datetime.strptime(value, "%Y-%m-%d")
-                    d = d.replace(hour=23, minute=59, second=59)
-                    return d.replace(tzinfo=GR_TZ) if GR_TZ else d
-                except (ValueError, TypeError):
-                    return None
-
-            for m in manual:
-                if not m.get("top"):
-                    continue
-                cutoff = parse_cutoff_gr(m.get("deadline") or "") or parse_cutoff_gr(m.get("expires") or "")
-                if cutoff:
-                    if now_gr > cutoff:
-                        m["top"] = False
-                    continue
-                try:
-                    age_days = (now_gr.date() - datetime.strptime(m["date"], "%Y-%m-%d").date()).days
-                except (KeyError, ValueError):
-                    age_days = 0
-                if age_days > TOP_MAX_AGE_DAYS:
-                    m["top"] = False
+            apply_top_expiry(manual, now_gr)
             urls = {m.get("url") for m in manual}
             data = sorted(manual + [d for d in data if d["url"] not in urls],
                           key=lambda d: d["date"], reverse=True)
