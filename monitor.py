@@ -670,30 +670,43 @@ def write_site_json():
             # ΔΙΟΡΘΩΣΗ 11/11: ένα "top": true στο manual.json δεν σβήνει ποτέ μόνο του, οπότε
             # ληγμένες προθεσμίες (π.χ. «έως 30 Οκτωβρίου») έμεναν στο «ΣΗΜΑΝΤΙΚΟ ΤΩΡΑ» και μετά
             # τη λήξη τους. Αυτόματο «σβήσιμο» του top, με αυτή τη σειρά προτίμησης:
-            #   1) "deadline": η πραγματική προθεσμία που αναφέρει η ανακοίνωση (π.χ. η ημέρα
-            #      που λήγει η αίτηση) — σβήνει την ΕΠΟΜΕΝΗ μέρα μετά τη λήξη της, ώρα Ελλάδας,
-            #      ώστε το θέμα να παραμένει «σημαντικό τώρα» όσο είναι ακόμα πράξιμο.
-            #   2) "expires": γενική ημερομηνία παύσης προβολής, όταν δεν υπάρχει ή δεν ταιριάζει
-            #      ένα μόνο "deadline" (π.χ. θέμα σημαντικό «μέχρι τέλος μήνα» χωρίς αίτηση).
+            #   1) "deadline": η πραγματική προθεσμία που αναφέρει η ανακοίνωση (π.χ. η ώρα
+            #      που κλείνει η αίτηση) — δέχεται είτε μόνο ημερομηνία ("YYYY-MM-DD", λήγει
+            #      στο τέλος ΕΚΕΙΝΗΣ της μέρας, 23:59:59 ώρα Ελλάδας) είτε ακριβή ώρα
+            #      ("YYYY-MM-DDTHH:MM", π.χ. "...T18:00" — λήγει ΑΚΡΙΒΩΣ εκείνη την ώρα,
+            #      ώρα Ελλάδας). Πριν την πρόσθεση ώρας, μια σύγκριση μόνο ημέρας θα έσβηνε
+            #      (ή θα κρατούσε) το θέμα για ολόκληρη τη λανθασμένη μέρα.
+            #   2) "expires": γενική ημερομηνία/ώρα παύσης προβολής, ίδια μορφή, όταν δεν
+            #      υπάρχει "deadline" (π.χ. θέμα σημαντικό «μέχρι τέλος μήνα» χωρίς αίτηση).
             #   3) αλλιώς, εφεδρικό όριο TOP_MAX_AGE_DAYS μερών από τη δημοσίευση.
             TOP_MAX_AGE_DAYS = 15
             try:
                 from zoneinfo import ZoneInfo
-                now_gr = datetime.now(ZoneInfo("Europe/Athens"))
+                GR_TZ = ZoneInfo("Europe/Athens")
             except Exception:
-                now_gr = datetime.now()  # fallback αν λείπει tzdata — ο runner έχει ήδη TZ=Europe/Athens
-            today_str = now_gr.strftime("%Y-%m-%d")
+                GR_TZ = None  # fallback αν λείπει tzdata — ο runner έχει ήδη TZ=Europe/Athens
+            now_gr = datetime.now(GR_TZ) if GR_TZ else datetime.now()
+
+            def parse_cutoff_gr(value):
+                """'YYYY-MM-DD' -> τέλος εκείνης της μέρας (23:59:59) ώρα Ελλάδας.
+                'YYYY-MM-DDTHH:MM[:SS]' -> ακριβής στιγμή, ώρα Ελλάδας.
+                Επιστρέφει aware datetime ή None αν δεν αναγνωρίζεται."""
+                try:
+                    if "T" in value:
+                        dt = datetime.fromisoformat(value)
+                        return dt.replace(tzinfo=GR_TZ) if GR_TZ and dt.tzinfo is None else dt
+                    d = datetime.strptime(value, "%Y-%m-%d")
+                    d = d.replace(hour=23, minute=59, second=59)
+                    return d.replace(tzinfo=GR_TZ) if GR_TZ else d
+                except (ValueError, TypeError):
+                    return None
+
             for m in manual:
                 if not m.get("top"):
                     continue
-                deadline = m.get("deadline")
-                if deadline:
-                    if deadline < today_str:
-                        m["top"] = False
-                    continue
-                expires = m.get("expires")
-                if expires:
-                    if expires < today_str:
+                cutoff = parse_cutoff_gr(m.get("deadline") or "") or parse_cutoff_gr(m.get("expires") or "")
+                if cutoff:
+                    if now_gr > cutoff:
                         m["top"] = False
                     continue
                 try:
@@ -879,7 +892,13 @@ def deploy_cloudflare(token, account):
     code, j = cf_req("POST", f"/accounts/{account}/pages/projects/{CF_PROJECT}/deployments", token,
                      files={"manifest": (None, json.dumps(manifest)), "branch": (None, "main")}, timeout=180)
     if j.get("success"):
-        print(f"🌐 Το site ενημερώθηκε: {base}")
+        # ΔΙΟΡΘΩΣΗ 11/11 (2ο πέρασμα): τυπώνουμε το id/URL ΑΥΤΟΥ του deployment (όχι μόνο
+        # το γενικό domain) ώστε στο log του GitHub Actions να φαίνεται ΠΟΙΟ ΑΚΡΙΒΩΣ
+        # deployment δημιουργήθηκε και πόσα αρχεία περιλάμβανε το πακέτο — χρήσιμο για να
+        # ξεχωρίσουμε ένα πραγματικό πρόβλημα deploy από καθυστέρηση cache/edge.
+        dep = j.get("result", {}) or {}
+        dep_url = dep.get("url") or f"https://{dep.get('id', '')}.{CF_PROJECT}.pages.dev"
+        print(f"🌐 Το site ενημερώθηκε: {base} (deployment: {dep_url}, {len(files)} αρχεία)")
         return True
     print(f"[!] Site: Cloudflare deploy — {cf_err(j)}")
     return False
