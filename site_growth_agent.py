@@ -27,6 +27,7 @@ Agent 2 — Site Growth Agent (v2 — διορθωμένη έκδοση μετά
 Σχεδιασμένο να τρέχει μόνο του, 1 φορά τη μέρα, μέσα από GitHub Actions
 (.github/workflows/site-growth-agent.yml).
 """
+import hashlib
 import json
 import os
 import re
@@ -114,7 +115,7 @@ THEMES = [
 
 # Το ΜΟΝΑΔΙΚΟ σύνολο URLs που επιτρέπεται στον Agent 2 να δημιουργήσει/αλλάξει μέσα
 # στο manual.json — καμία άλλη εγγραφή (χειροκίνητη ή άλλου bot) δεν αγγίζεται ποτέ.
-AGENT2_URLS = {f"/{t['slug']}.html" for t in THEMES}
+AGENT2_URLS = {f"/{t['slug']}" for t in THEMES}  # ΔΙΟΡΘΩΣΗ 11/11: καθαρό URL χωρίς .html
 
 
 def norm(s):
@@ -189,9 +190,26 @@ def esc(s):
     return (s or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
 
 
-def build_page_html(theme, items):
-    url = f"{SITE_URL}/{theme['slug']}.html"
-    updated = datetime.now().strftime("%d/%m/%Y")
+def items_signature(items):
+    """Hash του ΠΕΡΙΕΧΟΜΕΝΟΥ μιας θεματικής σελίδας (ποια ανακοινώσεις, με ποια σειρά) —
+    ΟΧΙ της ημερομηνίας/ώρας εκτέλεσης. Χρησιμοποιείται για να αποφασίσουμε αν μια σελίδα
+    ΠΡΑΓΜΑΤΙΚΑ άλλαξε, πριν την ξαναγράψουμε."""
+    sig = [(it.get("url", ""), it.get("title", ""), it.get("date", "")) for it in items]
+    return hashlib.sha1(json.dumps(sig, ensure_ascii=False, sort_keys=False).encode()).hexdigest()
+
+
+def build_page_html(theme, items, updated_date=None):
+    # ΔΙΟΡΘΩΣΗ 11/11: το canonical/og:url ήταν με κατάληξη .html — διαφορετικό από το
+    # καθαρό URL που δείχνει το sitemap.xml και από κάθε άλλη σελίδα του site, γεγονός
+    # που μπέρδευε τη Google (δύο «σωστά» URLs για την ίδια σελίδα). Το ίδιο το αρχείο
+    # γράφεται ακόμα ως {slug}.html στο δίσκο — το Cloudflare Pages σερβίρει μόνο του
+    # το καθαρό /{slug} σε αυτό το αρχείο.
+    url = f"{SITE_URL}/{theme['slug']}"
+    # ΔΙΟΡΘΩΣΗ 11/11 (2ο πέρασμα): "Τελευταία ενημέρωση" ΔΕΝ είναι πια η σημερινή ημερομηνία
+    # σε κάθε τρέξιμο — είναι η ημερομηνία που ΠΡΑΓΜΑΤΙΚΑ άλλαξε το περιεχόμενο (την περνάει
+    # το run()). Αλλιώς το HTML άλλαζε καθημερινά ακόμα και με τα ίδια ακριβώς νέα, κάτι που
+    # μόλυνε και το sitemap lastmod που μόλις διορθώθηκε.
+    updated = updated_date or datetime.now().strftime("%d/%m/%Y")
     rows = []
     for it in items[:MAX_ITEMS_PER_PAGE]:
         date = esc(it.get("date", ""))
@@ -323,16 +341,19 @@ def backup_page(slug):
     return backup_path
 
 
-def upsert_manual(theme, n_items):
+def upsert_manual(theme, n_items, items_hash, prev_date=None):
     """Προσθέτει/ενημερώνει ΜΟΝΟ τη δική του εγγραφή (url στο AGENT2_URLS).
-    Ποτέ δεν αγγίζει εγγραφή που δεν του ανήκει."""
-    url = f"/{theme['slug']}.html"
+    Ποτέ δεν αγγίζει εγγραφή που δεν του ανήκει.
+    ΔΙΟΡΘΩΣΗ 11/11 (2ο πέρασμα): το "date" μένει ΙΔΙΟ (prev_date) αν ο καλών (run())
+    έχει ήδη διαπιστώσει ότι το items_hash δεν άλλαξε — αλλιώς γίνεται "today". Έτσι η
+    ημερομηνία προχωράει ΜΟΝΟ όταν πραγματικά άλλαξε κάτι, όχι σε κάθε τρέξιμο."""
+    url = f"/{theme['slug']}"  # ΔΙΟΡΘΩΣΗ 11/11: ίδιο καθαρό URL με το canonical/sitemap
     assert url in AGENT2_URLS, f"BUG: ο Agent 2 προσπάθησε να γράψει URL εκτός του δικού του scope: {url}"
 
     items = load_manual()
-    today = datetime.now().strftime("%Y-%m-%d")
+    date = prev_date or datetime.now().strftime("%Y-%m-%d")
     entry = {
-        "date": today,
+        "date": date,
         "foreas": "Επιδόματα Τώρα",
         "title": theme["h1"],
         "url": url,
@@ -340,6 +361,7 @@ def upsert_manual(theme, n_items):
         "auto": False,
         "top": False,
         "cat": theme["cat"],
+        "items_hash": items_hash,
     }
     for i, it in enumerate(items):
         if it.get("url") == url:
@@ -366,6 +388,7 @@ def run():
     report_lines = [f"## Agent 2 — Site Growth · {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}"]
     touched = []
     changed_files = set()
+    existing_manual = {it.get("url"): it for it in load_manual()}
 
     for theme in THEMES:
         matches = [it for it in feed if match_theme(it, theme)]
@@ -373,25 +396,38 @@ def run():
         if len(matches) < MIN_ITEMS_TO_PUBLISH:
             continue
 
+        url = f"/{theme['slug']}"
+        new_hash = items_signature(matches)
+        prev_entry = existing_manual.get(url)
         existed = os.path.exists(os.path.join(SITE, f"{theme['slug']}.html"))
+
+        # ΔΙΟΡΘΩΣΗ 11/11 (2ο πέρασμα): αν το ΙΔΙΟ σύνολο ανακοινώσεων (ίδιο items_hash) είχε
+        # ήδη δημοσιευτεί, ΜΗΝ ξαναγράφεις το αρχείο ούτε το manual.json — αλλιώς το HTML
+        # (λόγω "Τελευταία ενημέρωση: <σήμερα>") και η ημερομηνία της εγγραφής αλλάζουν κάθε
+        # μέρα χωρίς ουσιαστική αλλαγή, μολύνοντας το sitemap lastmod που μόλις διορθώθηκε.
+        if existed and prev_entry and prev_entry.get("items_hash") == new_hash:
+            report_lines.append(f"- Χωρίς αλλαγή: **{theme['nav']}** — {len(matches)} ανακοινώσεις (ίδιο περιεχόμενο) — /{theme['slug']}")
+            continue
+
         if existed:
             backup_page(theme["slug"])  # ασφάλεια πριν την αλλαγή
 
-        html = build_page_html(theme, matches)
+        today = datetime.now().strftime("%Y-%m-%d")
+        html = build_page_html(theme, matches, updated_date=datetime.now().strftime("%d/%m/%Y"))
         path = os.path.join(SITE, f"{theme['slug']}.html")
         with open(path, "w", encoding="utf-8") as f:
             f.write(html)
         changed_files.add(os.path.relpath(path, HERE))
 
-        action = upsert_manual(theme, len(matches))
+        action = upsert_manual(theme, len(matches), new_hash, prev_date=today)
         changed_files.add(os.path.relpath(MANUAL, HERE))
 
         touched.append((theme, len(matches), action))
         verb = "Ανανεώθηκε" if existed else "✨ Δημιουργήθηκε νέα σελίδα"
-        report_lines.append(f"- {verb}: **{theme['nav']}** — {len(matches)} ανακοινώσεις — /{theme['slug']}.html")
+        report_lines.append(f"- {verb}: **{theme['nav']}** — {len(matches)} ανακοινώσεις — /{theme['slug']}")
 
     if not touched:
-        report_lines.append("- Καμία αλλαγή (δεν υπήρχαν αρκετές έγκυρες ανακοινώσεις ανά θέμα).")
+        report_lines.append("- Καμία πραγματική αλλαγή περιεχομένου σε καμία θεματική σελίδα.")
 
     report = "\n".join(report_lines) + "\n"
     print(report)
@@ -443,7 +479,7 @@ def build_email_report(touched, deploy_ok, backend, error_detail=None):
     if touched:
         for theme, n, action in touched:
             verb = "✨ νέα σελίδα" if action == "created" else "↻ ανανεώθηκε"
-            lines.append(f"   • {theme['nav']} — {verb} ({n} ανακοινώσεις) — /{theme['slug']}.html")
+            lines.append(f"   • {theme['nav']} — {verb} ({n} ανακοινώσεις) — /{theme['slug']}")
     else:
         lines.append("   • Καμία αλλαγή σήμερα (δεν υπήρχαν αρκετές νέες έγκυρες ανακοινώσεις ανά θέμα).")
 

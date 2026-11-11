@@ -136,6 +136,20 @@ def clean_title(t):
     return re.sub(r"\s+[-–]\s+[^-–]{2,40}$", "", t).strip()
 
 
+# Λεκτικά-«σκουπίδια» που μερικές φορές μπαίνουν μέσα στο κείμενο του <a> μαζί με τον
+# πραγματικό τίτλο (π.χ. ετικέτες template που δεν φαίνονται στον χρήστη αλλά διαβάζονται
+# από το BeautifulSoup .get_text()). Αφαιρούνται πριν αποθηκευτεί ο τίτλος.
+TITLE_JUNK = [r"Teaser\s+Description", r"Read\s+more", r"Διαβάστε\s+περισσότερα"]
+
+
+def strip_title_junk(title):
+    """Καθαρίζει γνωστά «υπολείμματα» template από τον τίτλο (π.χ. 'Teaser Description')."""
+    t = title
+    for pat in TITLE_JUNK:
+        t = re.sub(pat, " ", t, flags=re.IGNORECASE)
+    return " ".join(t.split())
+
+
 def title_tokens(t):
     out = set()
     for x in re.findall(r"[a-zα-ω0-9]+", norm(clean_title(t))):
@@ -258,7 +272,7 @@ def fetch_items(src):
     else:
         soup = BeautifulSoup(r.content, "html.parser")
         for a in soup.select(src.get("selector", "a")):
-            title = " ".join(a.get_text().split())
+            title = strip_title_junk(" ".join(a.get_text().split()))
             href = a.get("href")
             if href and "redirect-banner" in href:
                 continue
@@ -398,6 +412,53 @@ def tg_setup():
     print("Έτοιμο! Έλεγξε το Telegram σου." if ok else "Αποθηκεύτηκε, αλλά το μήνυμα δεν στάλθηκε.")
 
 
+STALL_STATE_FILE = os.path.join(HERE, "stall_state.json")
+DEFAULT_STALL_DAYS = 10  # αν μια επίσημη πηγή δεν φέρει ΤΙΠΟΤΑ νέο για τόσες μέρες, θεωρείται "κολλημένη"
+
+
+def check_stalled_sources(con, sources):
+    """Ειδοποιεί (μία φορά/ημέρα, όχι σε κάθε κύκλο 15λεπτου) όταν μια επίσημη πηγή δεν έχει
+    φέρει ΚΑΝΕΝΑ νέο αντικείμενο για περισσότερες μέρες από το όριο της — σημάδι ότι ο selector
+    έσπασε ή το site άλλαξε, όχι ότι απλά δεν βγήκε ανακοίνωση."""
+    try:
+        with open(STALL_STATE_FILE, encoding="utf-8") as f:
+            state = json.load(f)
+    except Exception:
+        state = {}
+    today = datetime.now().strftime("%Y-%m-%d")
+    changed = False
+    for src in sources:
+        if src.get("private") or src.get("type") == "rss":
+            continue  # οι πηγές ειδήσεων/Ραντάρ φυσιολογικά έχουν ανομοιόμορφη ροή — δεν ελέγχονται
+        name = src["name"]
+        row = con.execute("SELECT MAX(first_seen) FROM items WHERE source=?", (name,)).fetchone()
+        last = row[0] if row else None
+        if not last:
+            continue
+        try:
+            last_dt = datetime.fromisoformat(last)
+        except ValueError:
+            continue
+        days_quiet = (datetime.now() - last_dt).days
+        limit = src.get("stall_days", DEFAULT_STALL_DAYS)
+        if days_quiet >= limit:
+            if state.get(name) != today:  # ειδοποίηση μία φορά/ημέρα όσο διαρκεί το "κόλλημα"
+                ok = notify(f"⚠️ ΠΗΓΗ ΧΩΡΙΣ ΝΕΑ\n{name}: καμία νέα ανακοίνωση εδώ και {days_quiet} μέρες "
+                            f"(τελευταία: {last[:10]}).\nΈλεγξε αν άλλαξε η σελίδα ({src.get('url', '')}).")
+                # ΔΙΟΡΘΩΣΗ: καταγράφεται ως σταλμένη ΜΟΝΟ όταν το notify() πέτυχε πραγματικά —
+                # αλλιώς μια αποτυχημένη αποστολή (π.χ. πρόβλημα Telegram) θα σημειωνόταν σαν
+                # «ειδοποιήθηκε σήμερα» και δεν θα ξαναδοκιμαζόταν για 24 ώρες.
+                if ok:
+                    state[name] = today
+                    changed = True
+        elif name in state:
+            del state[name]  # ξαναήρθε κάτι νέο — καθαρό "reset" της ειδοποίησης
+            changed = True
+    if changed:
+        with open(STALL_STATE_FILE, "w", encoding="utf-8") as f:
+            json.dump(state, f, ensure_ascii=False, indent=2)
+
+
 def run_once(only_fast=False):
     """only_fast=True: ελέγχει μόνο τις πηγές για συντάξεις/νομοθεσία (fast: true)."""
     with open(os.path.join(HERE, "sources.json"), encoding="utf-8") as f:
@@ -427,10 +488,26 @@ def run_once(only_fast=False):
         return hit
 
     for src in sources:
+        t0 = time.perf_counter()
         try:
             items = fetch_items(src)
         except Exception as e:
-            print(f"[!] {src['name']}: {e}")
+            dt = time.perf_counter() - t0
+            # ΔΙΟΡΘΩΣΗ 11/11 (3ο πέρασμα): το "Connection aborted"/"403" από μόνο του δεν
+            # αποδεικνύει ΤΙ αποκλείει (IP/ASN, header, redirect loop, κλπ.) — καταγράφουμε
+            # ό,τι στοιχείο έχουμε πραγματικά διαθέσιμο (status, headers απόκρισης, redirect
+            # chain, χρόνος μέχρι την αποτυχία) ώστε η επόμενη πραγματική εκτέλεση να δώσει
+            # αποδεικτικά στοιχεία αντί για εικασία.
+            resp = getattr(e, "response", None)
+            if resp is not None:
+                redirs = " -> ".join(h.url for h in resp.history) if resp.history else "καμία"
+                print(f"[!] {src['name']}: {e} "
+                      f"[status={resp.status_code} server={resp.headers.get('Server', '?')} "
+                      f"cf-ray={resp.headers.get('CF-RAY', '—')} "
+                      f"retry-after={resp.headers.get('Retry-After', '—')} "
+                      f"redirects={redirs} χρόνος={dt:.1f}s]")
+            else:
+                print(f"[!] {src['name']}: {e} [χρόνος μέχρι αποτυχία={dt:.1f}s]")
             continue
         first_run = con.execute("SELECT COUNT(*) FROM items WHERE source=?",
                                 (src["name"],)).fetchone()[0] == 0
@@ -499,6 +576,16 @@ def run_once(only_fast=False):
             update_popular()
         except Exception as e:
             print("[!] Δημοφιλή:", e)
+        try:
+            check_stalled_sources(con, sources)
+        except Exception as e:
+            print("[!] Έλεγχος κολλημένων πηγών:", e)
+    if os.getenv("GOVWATCH_DRY_RUN") == "1":
+        # ΔΙΟΡΘΩΣΗ 11/11 (3ο πέρασμα): επιτρέπει πραγματική εκτέλεση (πραγματικό δίκτυο,
+        # πραγματικό runner) χωρίς deploy στο live site — ώστε μια διόρθωση πηγής να
+        # ελέγχεται μέσω workflow_dispatch σε branch χωρίς κανένα ρίσκο για production.
+        print("🧪 GOVWATCH_DRY_RUN=1 — παραλείπεται το publish()/deploy. Δεν αγγίχθηκε το live site.")
+        return
     try:
         publish()
     except Exception as e:
@@ -563,6 +650,52 @@ def netlify_config():
     return None, DEFAULT_SITE
 
 
+try:
+    from zoneinfo import ZoneInfo
+    GR_TZ = ZoneInfo("Europe/Athens")
+except Exception:
+    GR_TZ = None  # fallback αν λείπει tzdata — ο runner έχει ήδη TZ=Europe/Athens
+
+TOP_MAX_AGE_DAYS = 15
+
+
+def parse_cutoff_gr(value):
+    """'YYYY-MM-DD' -> τέλος εκείνης της μέρας (23:59:59) ώρα Ελλάδας.
+    'YYYY-MM-DDTHH:MM[:SS]' -> ακριβής στιγμή, ώρα Ελλάδας.
+    Επιστρέφει aware datetime ή None αν δεν αναγνωρίζεται."""
+    try:
+        if "T" in value:
+            dt = datetime.fromisoformat(value)
+            return dt.replace(tzinfo=GR_TZ) if GR_TZ and dt.tzinfo is None else dt
+        d = datetime.strptime(value, "%Y-%m-%d")
+        d = d.replace(hour=23, minute=59, second=59)
+        return d.replace(tzinfo=GR_TZ) if GR_TZ else d
+    except (ValueError, TypeError):
+        return None
+
+
+def apply_top_expiry(manual, now_gr):
+    """Σβήνει το 'top' των ληγμένων θεμάτων, in-place, με αυτή τη σειρά προτίμησης:
+    1) 'deadline' (ακριβής προθεσμία αίτησης), 2) 'expires' (γενική παύση προβολής),
+    3) εφεδρικό όριο TOP_MAX_AGE_DAYS ημερών από τη δημοσίευση.
+    Εξαγόμενο σε ξεχωριστή συνάρτηση ώστε να ελέγχεται χωρίς να τρέχει όλο το write_site_json()
+    (βλ. test_monitor_fixes.py)."""
+    for m in manual:
+        if not m.get("top"):
+            continue
+        cutoff = parse_cutoff_gr(m.get("deadline") or "") or parse_cutoff_gr(m.get("expires") or "")
+        if cutoff:
+            if now_gr > cutoff:
+                m["top"] = False
+            continue
+        try:
+            age_days = (now_gr.date() - datetime.strptime(m["date"], "%Y-%m-%d").date()).days
+        except (KeyError, ValueError):
+            age_days = 0
+        if age_days > TOP_MAX_AGE_DAYS:
+            m["top"] = False
+
+
 def write_site_json():
     """Γράφει site/anakoinoseis.json με τις πράσινες/κίτρινες ανακοινώσεις 45 ημερών.
     Επιστρέφει True αν άλλαξε κάτι."""
@@ -602,6 +735,20 @@ def write_site_json():
         try:
             with open(mpath, encoding="utf-8-sig") as f:
                 manual = [m for m in json.load(f) if m.get("date", "") >= since[:10]]
+            # ΔΙΟΡΘΩΣΗ 11/11: ένα "top": true στο manual.json δεν σβήνει ποτέ μόνο του, οπότε
+            # ληγμένες προθεσμίες (π.χ. «έως 30 Οκτωβρίου») έμεναν στο «ΣΗΜΑΝΤΙΚΟ ΤΩΡΑ» και μετά
+            # τη λήξη τους. Αυτόματο «σβήσιμο» του top, με αυτή τη σειρά προτίμησης:
+            #   1) "deadline": η πραγματική προθεσμία που αναφέρει η ανακοίνωση (π.χ. η ώρα
+            #      που κλείνει η αίτηση) — δέχεται είτε μόνο ημερομηνία ("YYYY-MM-DD", λήγει
+            #      στο τέλος ΕΚΕΙΝΗΣ της μέρας, 23:59:59 ώρα Ελλάδας) είτε ακριβή ώρα
+            #      ("YYYY-MM-DDTHH:MM", π.χ. "...T18:00" — λήγει ΑΚΡΙΒΩΣ εκείνη την ώρα,
+            #      ώρα Ελλάδας). Πριν την πρόσθεση ώρας, μια σύγκριση μόνο ημέρας θα έσβηνε
+            #      (ή θα κρατούσε) το θέμα για ολόκληρη τη λανθασμένη μέρα.
+            #   2) "expires": γενική ημερομηνία/ώρα παύσης προβολής, ίδια μορφή, όταν δεν
+            #      υπάρχει "deadline" (π.χ. θέμα σημαντικό «μέχρι τέλος μήνα» χωρίς αίτηση).
+            #   3) αλλιώς, εφεδρικό όριο TOP_MAX_AGE_DAYS μερών από τη δημοσίευση.
+            now_gr = datetime.now(GR_TZ) if GR_TZ else datetime.now()
+            apply_top_expiry(manual, now_gr)
             urls = {m.get("url") for m in manual}
             data = sorted(manual + [d for d in data if d["url"] not in urls],
                           key=lambda d: d["date"], reverse=True)
@@ -779,7 +926,13 @@ def deploy_cloudflare(token, account):
     code, j = cf_req("POST", f"/accounts/{account}/pages/projects/{CF_PROJECT}/deployments", token,
                      files={"manifest": (None, json.dumps(manifest)), "branch": (None, "main")}, timeout=180)
     if j.get("success"):
-        print(f"🌐 Το site ενημερώθηκε: {base}")
+        # ΔΙΟΡΘΩΣΗ 11/11 (2ο πέρασμα): τυπώνουμε το id/URL ΑΥΤΟΥ του deployment (όχι μόνο
+        # το γενικό domain) ώστε στο log του GitHub Actions να φαίνεται ΠΟΙΟ ΑΚΡΙΒΩΣ
+        # deployment δημιουργήθηκε και πόσα αρχεία περιλάμβανε το πακέτο — χρήσιμο για να
+        # ξεχωρίσουμε ένα πραγματικό πρόβλημα deploy από καθυστέρηση cache/edge.
+        dep = j.get("result", {}) or {}
+        dep_url = dep.get("url") or f"https://{dep.get('id', '')}.{CF_PROJECT}.pages.dev"
+        print(f"🌐 Το site ενημερώθηκε: {base} (deployment: {dep_url}, {len(files)} αρχεία)")
         return True
     print(f"[!] Site: Cloudflare deploy — {cf_err(j)}")
     return False
@@ -820,10 +973,76 @@ def run_seo_prerender():
         print(f"[!] Site: generate_seo_pages σφάλμα ({e}) — συνεχίζω χωρίς αυτό.")
 
 
+SITEMAP_LASTMOD_FILE = os.path.join(HERE, "sitemap_lastmod.json")
+
+
+def write_sitemap():
+    """Ξαναφτιάχνει το site/sitemap.xml ΑΥΤΟΜΑΤΑ από τα πραγματικά .html αρχεία που υπάρχουν
+    στο site/ — όχι χειροκίνητη λίστα που ξεχνιέται (ΔΙΟΡΘΩΣΗ 11/11: ήταν κολλημένη στις
+    01/10 με 23 URLs, ενώ το site έχει πλέον πολλές παραπάνω σελίδες επιδομάτων/ενοτήτων).
+    Προσθέτει και τις σταθερές σελίδες πληροφοριών (νομικό/επικοινωνία) που υπάρχουν μόνο ως
+    SPA-route (όχι ξεχωριστό .html αρχείο) αλλά είναι πραγματικές, ξεχωριστές σελίδες.
+
+    ΔΙΟΡΘΩΣΗ 11/11 (2ο πέρασμα): το lastmod ΔΕΝ είναι πια η σημερινή ημερομηνία σε κάθε
+    εκτέλεση — αυτό έκανε το sitemap αναξιόπιστο για τη Google (κάθε σελίδα φαινόταν
+    «άλλαξε σήμερα» ακόμα και όταν δεν άλλαξε τίποτα). Κρατάμε persisted ανά-URL hash
+    περιεχομένου σε sitemap_lastmod.json (committed στο git) και το lastmod προχωράει
+    ΜΟΝΟ όταν το hash μιας σελίδας πραγματικά αλλάξει (ή είναι καινούργια)."""
+    base = "https://epidomatatora.gr"
+    urls = ["/"]
+    file_for_url = {"/": os.path.join(SITE, "index.html")}
+    for root, _, files in sorted(os.walk(SITE)):
+        for fn in sorted(files):
+            if not fn.endswith(".html") or fn == "index.html":
+                continue
+            full = os.path.join(root, fn)
+            rel = os.path.relpath(full, SITE)
+            u = "/" + rel[:-len(".html")].replace(os.sep, "/")
+            urls.append(u)
+            file_for_url[u] = full
+    for extra in ("/sxetika", "/aporrito", "/oroi", "/diafimisi"):  # μόνο SPA-route, χωρίς δικό τους .html
+        if extra not in urls:
+            urls.append(extra)
+            file_for_url[extra] = os.path.join(SITE, "index.html")  # περιεχόμενό τους = το SPA shell
+
+    try:
+        with open(SITEMAP_LASTMOD_FILE, encoding="utf-8") as f:
+            state = json.load(f)
+    except Exception:
+        state = {}
+
+    today = datetime.now().strftime("%Y-%m-%d")
+    new_state = {}
+    for u in urls:
+        fpath = file_for_url.get(u)
+        digest = None
+        if fpath and os.path.isfile(fpath):
+            with open(fpath, "rb") as f:
+                digest = hashlib.sha1(f.read()).hexdigest()
+        prev = state.get(u) or {}
+        if digest and prev.get("hash") == digest and prev.get("lastmod"):
+            new_state[u] = prev  # ίδιο περιεχόμενο — κρατάμε την παλιά ημερομηνία
+        else:
+            new_state[u] = {"hash": digest, "lastmod": today}
+    state = new_state
+    with open(SITEMAP_LASTMOD_FILE, "w", encoding="utf-8") as f:
+        json.dump(state, f, ensure_ascii=False, indent=1, sort_keys=True)
+
+    lines = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for u in urls:
+        lastmod = state.get(u, {}).get("lastmod", today)
+        lines.append(f"  <url><loc>{base}{u}</loc><lastmod>{lastmod}</lastmod></url>")
+    lines.append("</urlset>")
+    with open(os.path.join(SITE, "sitemap.xml"), "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
+    print(f"🗺️ sitemap.xml: {len(urls)} URLs")
+
+
 def publish(force=False):
     """Ανεβάζει το site μόνο όταν υπάρχουν νέες ανακοινώσεις (ή με force)."""
     write_site_json()
     run_seo_prerender()
+    write_sitemap()
     h = hashlib.sha1()  # αποτύπωμα όλου του φακέλου site (ανακοινώσεις + σχέδιο)
     for root, _, files in sorted(os.walk(SITE)):
         for fn in sorted(files):

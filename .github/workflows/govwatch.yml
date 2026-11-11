@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: '*/15 * * * *'
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Δοκιμή χωρίς deploy/commit (true/false) — για έλεγχο διορθώσεων πηγών σε branch, χωρίς καμία επίδραση στο live site"
+        required: false
+        default: 'false'
 
 concurrency:
   group: govwatch
@@ -28,6 +33,9 @@ jobs:
 
       - run: pip install -r requirements.txt
 
+      - name: Run tests (δοκιμές 11/11 — deadline/expiry, notify-gating, sitemap lastmod)
+        run: python test_monitor_fixes.py
+
       - name: Write secret files
         env:
           TELEGRAM_TXT: ${{ secrets.TELEGRAM_TXT }}
@@ -41,15 +49,23 @@ jobs:
           true
 
       - name: Run GovWatch
+        env:
+          GOVWATCH_DRY_RUN: ${{ github.event.inputs.dry_run == 'true' && '1' || '' }}
         run: |
-          M=$(date +%M)
-          if [ $((10#$M % 30)) -lt 15 ]; then
+          if [ "$GOVWATCH_DRY_RUN" = "1" ]; then
+            echo "🧪 DRY RUN — πλήρης κύκλος (όλες οι πηγές), χωρίς deploy/commit."
             python monitor.py run
           else
-            python -c "import monitor; monitor.run_once(only_fast=True)"
+            M=$(date +%M)
+            if [ $((10#$M % 30)) -lt 15 ]; then
+              python monitor.py run
+            else
+              python -c "import monitor; monitor.run_once(only_fast=True)"
+            fi
           fi
 
       - name: Save state
+        if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
           git config user.name "govwatch-bot"
           git config user.email "govwatch-bot@users.noreply.github.com"
