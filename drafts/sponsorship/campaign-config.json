@@ -1,0 +1,23 @@
+{
+  "_comment": "ΠΡΟΣΧΕΔΙΟ — ανενεργό. Δεν διαβάζεται από κανένα τρέχον script. Αντιγραφή/ενσωμάτωση μόνο μετά ΟΚ.",
+  "campaign": {
+    "slug": "example-sponsor-2026-12",
+    "sponsor_name": "",
+    "active": false,
+    "start_date": null,
+    "end_date": null,
+    "max_duration_days": 30,
+    "placement": "site-single-slot",
+    "social_mentions_planned": 0,
+    "social_mentions_max": 3,
+    "redirect_path": "/s/example-sponsor-2026-12/",
+    "target_url": "",
+    "requires_afm_for_invoice_only": true,
+    "guarantees": {
+      "impressions": false,
+      "clicks": false,
+      "sales": false
+    },
+    "notes": "end_date είναι υποχρεωτικό πριν γίνει active:true. Χωρίς end_date, δεν ενεργοποιείται."
+  }
+}
