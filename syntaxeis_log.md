@@ -546,3 +546,9 @@
   https://www.e-efka.gov.gr/el/egkyklioi-kai-genika-eggrafa/egkyklios-242026
 - 11/11/2026 17:32 · **Ειδήσεις: Εφορία** · Έκανε μία αλλαγή στον συνταξιοδοτικό λογαριασμό του και γλίτωσε πάνω από 300.000 δολάρια από την εφορία - Dnews
   https://news.google.com/rss/articles/CBMi3wFBVV95cUxNRWxocjlUUW5WM0oxRWpUUkk5VE9MVjViN2FrdWdlVmxmREZqcWJFRWdtVjZWUGkzQnd0bURSQ2xwODNsSDd0MWo5UGxzZVZRSHRqUURLdG42ck9LaWdqSGtYWGdxUXhtLWdZYmtqM25LX1U4OEtzc2IwdjdxTVd1VE02Q2dTTldTUnBwLWs4OFhUMkdLRm5IU2JyNXV2QzNKTHdEalZxdzVSRDVUMmpPQ0tJMGc5dWNpdDlkanhMMGJraUt5TWliWUZLMGNpWUNGZXpBTl94bTNzckxaeEl3?oc=5
+- 12/11/2026 13:14 · **e-ΕΦΚΑ Εγκύκλιοι** · 10 Νοε 2026 Έκδοση Αποφάσεων Απονομής Επικουρικής Σύνταξης e-EΦΚΑ Teaser Description Έκδοση Αποφάσεων Απονομής Επικουρικής Σύνταξης e-EΦΚΑ
+  https://www.e-efka.gov.gr/el/egkyklioi-kai-genika-eggrafa/ekdosi-apofaseon-aponomis-epikoyrikis-syntaxis-e-efka
+- 12/11/2026 13:14 · **e-ΕΦΚΑ Εγκύκλιοι** · 30 Οκτ 2026 Υποβολή αιτήσεων - Αναζήτηση δικαιολογητικών για την απονομή επικουρικής σύνταξης γήρατος και αναπηρίας. Teaser Description Υποβολή αιτήσεων - Αναζήτηση δικαιολογητικών για την απονομή επικουρικής σύνταξης γήρατος και αναπηρίας
+  https://www.e-efka.gov.gr/el/egkyklioi-kai-genika-eggrafa/ypoboli-aitiseon-anazitisi-dikaiologitikon-gia-tin-aponomi-epikoyrikis
+- 12/11/2026 13:14 · **Ειδήσεις: Εφορία** · Πόσα δηλώνουν οι Έλληνες στην Εφορία – Οι αριθμοί για μισθούς, συντάξεις και ακίνητα - Μαλεβιζιώτης
+  https://news.google.com/rss/articles/CBMiuwFBVV95cUxNWUdZV0hoSjFxRWk2alNXVkVoOUNQcFd2VHA2NFBVS2tzWmxEUXRFZXZNUU5EM1FnNjFNdTNwWXFPSk05V3lpeUN4VC1JMzlXb25TcGJxUUN3alZIT1VGT0FfRHl4SFFFejNhSllPNVNmV1c3QkNCUlVlR0NZZ3RHR3JVejRLcGJyMjhpRGJBVzJWYTQwUmpSN1ZPT3RIQUZocGZKak9Jejc1dVFYTUw2WTNCSFhzTzRid0JR?oc=5
