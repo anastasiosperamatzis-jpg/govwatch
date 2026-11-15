@@ -1,6 +1,6 @@
 [
  {
-  "date": "2026-11-14",
+  "date": "2026-11-15",
   "foreas": "Επιδόματα Τώρα",
   "title": "Συντάξεις: Ημερομηνίες Πληρωμών",
   "url": "/syntaxeis-pliromes.html",
@@ -10,7 +10,7 @@
   "cat": "syntaxeis"
  },
  {
-  "date": "2026-11-14",
+  "date": "2026-11-15",
   "foreas": "Επιδόματα Τώρα",
   "title": "Ρύθμιση Οφειλών σε Εφορία & Ασφαλιστικά Ταμεία",
   "url": "/rythmisi-ofeilon.html",
@@ -20,7 +20,7 @@
   "cat": "forologia"
  },
  {
-  "date": "2026-11-14",
+  "date": "2026-11-15",
   "foreas": "Επιδόματα Τώρα",
   "title": "Επίδομα Παιδιού Α21 — Νέα & Ανακοινώσεις",
   "url": "/epidoma-paidiou-a21.html",
@@ -723,45 +723,5 @@
   "auto": false,
   "top": false,
   "cat": "forologia"
- },
- {
-  "date": "2026-10-01",
-  "foreas": "ΔΥΠΑ",
-  "title": "Ξεκινά η υποβολή αιτήσεων για την 13η Συμπληρωματική Πρόσκληση του Μητρώου Εκπαιδευτικών της ΔΥΠΑ",
-  "url": "https://www.dypa.gov.gr/ksekina-i-ipovoli-aitiseon-ghia-tin-13i-simpliromatiki-prosklisi-toy-mitrwoy-ekpaideftikwn-tis-dypa",
-  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
-  "auto": true
- },
- {
-  "date": "2026-10-01",
-  "foreas": "Υπουργείο Παιδείας",
-  "title": "01-10-26 Δημόσιες ΣΑΕΚ: Την 1η Οκτωβρίου ξεκινά το νέο έτος Δημόσιας Επαγγελματικής Κατάρτισης – Τηρήθηκε το χρονοδιάγραμμα",
-  "url": "https://www.minedu.gov.gr/?view=article&id=70937:01-10-26-demosies-saek-ten-1e-oktobriou-xekina-to-neo-etos-demosias-epangelmatikes-katartises-teretheke-to-chronodiagramma&catid=1183",
-  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
-  "auto": true
- },
- {
-  "date": "2026-10-01",
-  "foreas": "Υπουργείο Οικονομικών",
-  "title": "Κυριάκος Πιερρακάκης: «Ο νόμος για τις 120 δόσεις θα ψηφιστεί μέσα στον Οκτώβριο και θα εφαρμοστεί αμέσως» – «Στο προσχέδιο του προϋπολογισμού υπάρχουν εφεδρείες και για πιο δύσκολα σενάρια. Θα είμαστε συνεχώς δίπλα στους πολίτες»",
-  "url": "https://minfin.gov.gr/kyriakos-pierrakakis-o-nomos-gia-tis-120-doseis-tha-psifistei-mesa-ston-oktovrio-kai-tha-efarmostei-amesos-sto-proschedio-tou-proypologismou-yparchoun-efedreies-kai-gia-pio-dyskol/",
-  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
-  "auto": true
- },
- {
-  "date": "2026-10-01",
-  "foreas": "ΔΥΠΑ",
-  "title": "Περισσότερες από 140 επιχειρήσεις και 3.500 θέσεις εργασίας στην 58η «Ημέρα Καριέρας» της ΔΥΠΑ στην Αθήνα",
-  "url": "https://www.dypa.gov.gr/perissoteres-apo-140-epikheiriseis-kai-3500-theseis-erghasias-stin-58i-hmera-karieras-tis-dypa-stin-athina",
-  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
-  "auto": true
- },
- {
-  "date": "2026-10-01",
-  "foreas": "ΔΥΠΑ",
-  "title": "Εγκύκλιοι Προγραμμάτων Απασχόλησης",
-  "url": "https://www.dypa.gov.gr/el/eghkyklioi-proghrammaton-apaskholisis",
-  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
-  "auto": true
  }
 ]
