@@ -1,6 +1,6 @@
 [
  {
-  "date": "2026-11-16",
+  "date": "2026-11-17",
   "foreas": "Επιδόματα Τώρα",
   "title": "Συντάξεις: Ημερομηνίες Πληρωμών",
   "url": "/syntaxeis-pliromes.html",
@@ -10,7 +10,7 @@
   "cat": "syntaxeis"
  },
  {
-  "date": "2026-11-16",
+  "date": "2026-11-17",
   "foreas": "Επιδόματα Τώρα",
   "title": "Επίδομα Παιδιού Α21 — Νέα & Ανακοινώσεις",
   "url": "/epidoma-paidiou-a21.html",
@@ -18,6 +18,30 @@
   "auto": false,
   "top": false,
   "cat": "paroxes"
+ },
+ {
+  "date": "2026-11-17",
+  "foreas": "ΟΠΕΚΑ",
+  "title": "Παράταση έως και 23 Νοεμβρίου των αιτήσεων στο πρόγραμμα παροχής χρηματικών βραβείων – Υποτροφιών σε επιτυχόντες/ούσες μαθητές/τριες στις Πανελλαδικές Εξετάσεις 2026",
+  "url": "https://opeka.gov.gr/paratasi-eos-kai-23-noemvrioy-ton-aitiseon-sto-programma-parochis-chrimatikon-vraveion-ypotrofion-se-epitychontes-oyses-mathites-tries-stis-panelladikes-exetaseis-2026/",
+  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
+  "auto": true
+ },
+ {
+  "date": "2026-11-17",
+  "foreas": "Υπουργείο Παιδείας",
+  "title": "16-11-26 Παράταση έως και την Παρασκευή 20 Νοεμβρίου 2026 και ώρα 14.00 για τις αιτήσεις κατ' εξαίρεση μετεγγραφών/μετακινήσεων",
+  "url": "https://www.minedu.gov.gr/?view=article&id=71159:16-11-26-paratase-eos-kai-ten-paraskeue-20-noembriou-2026-kai-ora-14-00-gia-tis-aiteseis-kat-exairese-metengraphon-metakineseon&catid=1183",
+  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
+  "auto": true
+ },
+ {
+  "date": "2026-11-17",
+  "foreas": "Υπουργείο Παιδείας",
+  "title": "17-11-26 2.820 νέες προσλήψεις αναπληρωτών εκπαιδευτικών και μελών Ειδικού Εκπαιδευτικού και Βοηθητικού Προσωπικού στην Πρωτοβάθμια και Δευτεροβάθμια Εκπαίδευση και ΔΗΜΩΣ",
+  "url": "https://www.minedu.gov.gr/?view=article&id=71162:16-10-26-nees-proslepseis-anapleroton-ekpaideutikon-kai-melon-eidikou-ekpaideutikou-kai-boethetikou-prosopikou-sten-protobathmia-kai-deuterobathmia-ekpaideuse-kai-demos&catid=1183",
+  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
+  "auto": true
  },
  {
   "date": "2026-11-15",
@@ -140,14 +164,6 @@
   "foreas": "Υπουργείο Παιδείας",
   "title": "09-11-26 Σοφία Ζαχαράκη: 2,7 εκατ. ευρώ στο Δημοκρίτειο Πανεπιστήμιο Θράκης για το φοιτητικό στεγαστικό επίδομα",
   "url": "https://www.minedu.gov.gr/deltia-typoy-2/71134-09-11-26-sophia-zacharake-2-7-ekat-euro-sto-demokriteio-panepistemio-thrakes-gia-to-phoitetiko-stegastiko-epidoma",
-  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
-  "auto": true
- },
- {
-  "date": "2026-11-09",
-  "foreas": "ΟΠΕΚΑ",
-  "title": "Έως τη Δευτέρα 16 Νοεμβρίου η υποβολή των αιτήσεων στο πρόγραμμα παροχής χρηματικών βραβείων – Υποτροφιών σε επιτυχόντες/-ούσες μαθητές/-τριες στις Πανελλαδικές Εξετάσεις 2026",
-  "url": "https://opeka.gov.gr/eos-ti-deytera-16-noemvrioy-i-ypovoli-ton-aitiseon-sto-programma-parochis-chrimatikon-vraveion-ypotrofion-se-epitychontes-oyses-mathites-tries-stis-panelladikes-exetaseis-2026/",
   "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
   "auto": true
  },
@@ -429,14 +445,6 @@
  },
  {
   "date": "2026-10-09",
-  "foreas": "Υπουργείο Παιδείας",
-  "title": "09-10-26 2.096 νέες προσλήψεις αναπληρωτών εκπαιδευτικών και μελών Ειδικού Εκπαιδευτικού και Βοηθητικού Προσωπικού στην Πρωτοβάθμια και Δευτεροβάθμια Εκπαίδευση και ΔΗΜΩΣ",
-  "url": "https://www.minedu.gov.gr/?view=article&id=71007:09-10-26-2-096-nees-proslepseis-anapleroton-ekpaideutikon-kai-melon-eidikou-ekpaideutikou-kai-boethetikou-prosopikou-sten-protobathmia-kai-deuterobathmia-ekpaideuse-kai-demos&catid=1288",
-  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
-  "auto": true
- },
- {
-  "date": "2026-10-09",
   "foreas": "Υπουργείο Ανάπτυξης",
   "title": "Τάκης Θεοδωρικάκος: Η αγορά πρέπει να σεβαστεί ότι οι συνάνθρωποί μας που νίκησαν τον καρκίνο δικαιούνται ισότιμη νέα αρχή",
   "url": "https://www.mindev.gov.gr/takis-theodorikakos-h-agora-prepei-na-sevastei-oti-oi-synanthrwpoi-mas-poy-nikhsan-ton-karkino-dikaiountai-isotimh-nea-arxh/",
@@ -661,13 +669,5 @@
   "text": "Στη σύγκριση για 300 kWh τον μήνα, το φθηνότερο σταθερό πρόγραμμα είναι το ΔΕΗ myHome Online (0,115 €/kWh, πάγιο 3,50€), με εκτιμώμενο κόστος 38€ τον μήνα. Η διαφορά από το ακριβότερο συγκρινόμενο πρόγραμμα φτάνει τα 319€ τον χρόνο, μόνο στη χρέωση προμήθειας (χωρίς ρυθμιζόμενες χρεώσεις και ΦΠΑ).",
   "auto": false,
   "top": false
- },
- {
-  "date": "2026-10-03",
-  "foreas": "Υπουργείο Εργασίας",
-  "title": "Ο «χάρτης» των πληρωμών από e-ΕΦΚΑ, ΔΥΠΑ για την περίοδο 5 έως 9 Οκτωβρίου",
-  "url": "https://ypergasias.gov.gr/o-chartis-ton-pliromon-apo-e-efka-dypa-gia-tin-periodo-5-eos-9-oktovriou/",
-  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
-  "auto": true
  }
 ]
