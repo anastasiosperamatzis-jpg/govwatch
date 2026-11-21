@@ -1,6 +1,34 @@
 [
  {
   "date": "2026-11-21",
+  "foreas": "Επιδόματα Τώρα",
+  "title": "Συντάξεις: Ημερομηνίες Πληρωμών",
+  "url": "/syntaxeis-pliromes.html",
+  "text": "Ανακοινώσεις e-ΕΦΚΑ για το πότε πληρώνονται οι συντάξεις κάθε μήνα, με επίσημη πηγή. Ενημερώνεται αυτόματα. (3 ανακοινώσεις ως τώρα.)",
+  "auto": false,
+  "top": false,
+  "cat": "syntaxeis"
+ },
+ {
+  "date": "2026-11-21",
+  "foreas": "Επιδόματα Τώρα",
+  "title": "Επίδομα Παιδιού Α21 — Νέα & Ανακοινώσεις",
+  "url": "/epidoma-paidiou-a21.html",
+  "text": "Όλες οι επίσημες ανακοινώσεις ΟΠΕΚΑ για το Επίδομα Παιδιού Α21: αιτήσεις, πληρωμές, προθεσμίες. Ενημερώνεται αυτόματα. (4 ανακοινώσεις ως τώρα.)",
+  "auto": false,
+  "top": false,
+  "cat": "paroxes"
+ },
+ {
+  "date": "2026-11-21",
+  "foreas": "Υπουργείο Ανάπτυξης",
+  "title": "Σταύρος Καλαφάτης: «Στόχος μας είναι από την εφαρμογή της Τεχνητής Νοημοσύνης να μη χαθούν αλλά να δημιουργηθούν νέες θέσεις εργασίας και νέα επαγγέλματα»",
+  "url": "https://www.mindev.gov.gr/stavros-kalafaths-stoxos-mas-einai-apo-thn-efarmogh-ths-texnhths-nohmosynhs-na-mh-xathoun-alla-na-dhmiourgithoun-nees-theseis-ergasias-kai-nea-epaggelmata/",
+  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
+  "auto": true
+ },
+ {
+  "date": "2026-11-21",
   "foreas": "ΟΠΕΚΑ",
   "title": "ΥΚΟΙΣΟ: Στα 400 ευρώ, από 250, η ετήσια ενίσχυση για άτομα με αναπηρία και ανασφάλιστους υπερήλικες – Υλοποιείται η εξαγγελία του Πρωθυπουργού στη ΔΕΘ",
   "url": "https://opeka.gov.gr/ykoiso-sta-400-eyro-apo-250-i-etisia-enischysi-gia-atoma-me-anapiria-kai-anasfalistoys-yperilikes-ylopoieitai-i-exaggelia-toy-prothypoyrgoy-sti-deth/",
@@ -14,26 +42,6 @@
   "url": "https://www.minedu.gov.gr/deltia-typoy-2/71180-20-11-26-choregese-stegastikou-epidomatos-gia-to-ekpaideutiko-etos-2025-2026-stous-katartizomenous-ton-demosion-s-a-e-k-armodiotetas-y-pai-th-a",
   "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
   "auto": true
- },
- {
-  "date": "2026-11-20",
-  "foreas": "Επιδόματα Τώρα",
-  "title": "Συντάξεις: Ημερομηνίες Πληρωμών",
-  "url": "/syntaxeis-pliromes.html",
-  "text": "Ανακοινώσεις e-ΕΦΚΑ για το πότε πληρώνονται οι συντάξεις κάθε μήνα, με επίσημη πηγή. Ενημερώνεται αυτόματα. (3 ανακοινώσεις ως τώρα.)",
-  "auto": false,
-  "top": false,
-  "cat": "syntaxeis"
- },
- {
-  "date": "2026-11-20",
-  "foreas": "Επιδόματα Τώρα",
-  "title": "Επίδομα Παιδιού Α21 — Νέα & Ανακοινώσεις",
-  "url": "/epidoma-paidiou-a21.html",
-  "text": "Όλες οι επίσημες ανακοινώσεις ΟΠΕΚΑ για το Επίδομα Παιδιού Α21: αιτήσεις, πληρωμές, προθεσμίες. Ενημερώνεται αυτόματα. (4 ανακοινώσεις ως τώρα.)",
-  "auto": false,
-  "top": false,
-  "cat": "paroxes"
  },
  {
   "date": "2026-11-19",
@@ -552,30 +560,6 @@
   "foreas": "Υπουργείο Υγείας",
   "title": "Παροχή διευκρινίσεων αναφορικά με τα επιτρεπόμενα προς διάθεση προϊόντα στα σχολικά κυλικεία.",
   "url": "https://www.moh.gov.gr/articles/health/dieythynsh-dhmosias-ygieinhs/metadotika-kai-mh-metadotika-noshmata/c388-egkyklioi/14829-paroxh-dieykrinisewn-anaforika-me-ta-epitrepomena-pros-diathesh-proionta-sta-sxolika-kylikeia",
-  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
-  "auto": true
- },
- {
-  "date": "2026-10-07",
-  "foreas": "Υπουργείο Οικονομικών",
-  "title": "Κυριάκος Πιερρακάκης: «Πρέπει να συνδέσουμε τις αποταμιεύσεις της Ευρώπης με τις ευκαιρίες της Ευρώπης» – «Χρειαζόμαστε περίπου 800 δισεκατομμύρια ευρώ πρόσθετων επενδύσεων κάθε χρόνο. Οι δημόσιοι προϋπολογισμοί από μόνοι τους δεν μπορούν να χρηματοδοτήσουν τον μετασχηματισμό της Ευρώπης. Θέλουμε ιδιωτικές επενδύσεις»",
-  "url": "https://minfin.gov.gr/kyriakos-pierrakakis-prepei-na-syndesoume-tis-apotamiefseis-tis-evropis-me-tis-efkairies-tis-evropis-chreiazomaste-peripou-800-disekatommyria-evro-prostheton-ependyseon-kathe-chr/",
-  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
-  "auto": true
- },
- {
-  "date": "2026-10-07",
-  "foreas": "ΟΠΕΚΑ",
-  "title": "Από 7 Οκτωβρίου η αναδιανομή στο πρόγραμμα δωρεάν παροχής βιβλίων του ΛΑΕ/ΟΠΕΚΑ",
-  "url": "https://opeka.gov.gr/apo-7-oktovrioy-i-anadianomi-sto-programma-dorean-parochis-vivlion-toy-lae-opeka/",
-  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
-  "auto": true
- },
- {
-  "date": "2026-10-07",
-  "foreas": "Υπουργείο Οικονομικών",
-  "title": "97,8 εκατ. ευρώ από το Εθνικό Πρόγραμμα Ανάπτυξης 2026-2030 για τη στήριξη Περιφερειών και Δήμων σε περιοχές που επλήγησαν από φυσικές καταστροφές",
-  "url": "https://minfin.gov.gr/978-ekat-evro-apo-to-ethniko-programma-anaptyxis-2026-2030-gia-ti-stirixi-perifereion-kai-dimon-se-perioches-pou-epligisan-apo-fysikes-katastrofes/",
   "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
   "auto": true
  }
