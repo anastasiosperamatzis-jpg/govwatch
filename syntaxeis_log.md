@@ -620,3 +620,5 @@
   https://news.google.com/rss/articles/CBMiogFBVV95cUxOejVENW5INDZMQ180RFNMaWMyV2hJOHZZc29abi1heUxKdlJrYVZQNjlFUlpwTW5uam1XUlJhZUVtSXNUdG1HcWV4S0ZqMHE2ZXRwX3pjZlZXY01TbUljMm13VTlMRmxBOHB0aFJSOWlERFpOakRLYV9mb2hIZHBrOWNGUkxLLVRpRUt2NnZGOGg5OEJRTmpteERjRnl1LTF5M0E?oc=5
 - 23/11/2026 15:42 · **Ειδήσεις: Εφορία** · Ρύθμιση 120 δόσεων: Τι προβλέπεται για τα χρέη σε Εφορία και ασφαλιστικά ταμεία - newsique.gr
   https://news.google.com/rss/articles/CBMiowFBVV95cUxONlhPajlNVkJIc25icElaSjBLRzRKeGhhd2pnU19BemZ2SkhDV0pEb19UeXZ2a2hYdGU5bFRvcGFKX2ZMZ01uNHA0amthSk5VYkxzeEtJSVJDZ1JhY2dwbzA2aXg4bFZsWFd3TE1mM2JoeXF1b0dWMm9XWFVnYVg4MWxjZk0xWGdjc0o2VE14YWhZbGY1Wko2Snh0WFRFUGZ6NEFB?oc=5
+- 24/11/2026 12:58 · **ΔΕΗ Δελτία Τύπου** · Όμιλος ΔΕΗ: Εξαγορά της ενεργειακής εταιρίας Enegan – Δυναμική είσοδος στη λιανική αγορά ενέργειας της Ιταλίας
+  https://www.ppcgroup.com/el/omilos-dei/grafeio-typou/deltia-typou/prosfata/deltia-tipou-2026/noemvrios-2026/omilos-dei-eksagora-ths-energeiakhs-etairias-enegan/
