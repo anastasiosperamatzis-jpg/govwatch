@@ -1,6 +1,6 @@
 [
  {
-  "date": "2026-11-22",
+  "date": "2026-11-23",
   "foreas": "Επιδόματα Τώρα",
   "title": "Συντάξεις: Ημερομηνίες Πληρωμών",
   "url": "/syntaxeis-pliromes.html",
@@ -10,11 +10,11 @@
   "cat": "syntaxeis"
  },
  {
-  "date": "2026-11-22",
+  "date": "2026-11-23",
   "foreas": "Επιδόματα Τώρα",
   "title": "Επίδομα Παιδιού Α21 — Νέα & Ανακοινώσεις",
   "url": "/epidoma-paidiou-a21.html",
-  "text": "Όλες οι επίσημες ανακοινώσεις ΟΠΕΚΑ για το Επίδομα Παιδιού Α21: αιτήσεις, πληρωμές, προθεσμίες. Ενημερώνεται αυτόματα. (4 ανακοινώσεις ως τώρα.)",
+  "text": "Όλες οι επίσημες ανακοινώσεις ΟΠΕΚΑ για το Επίδομα Παιδιού Α21: αιτήσεις, πληρωμές, προθεσμίες. Ενημερώνεται αυτόματα. (3 ανακοινώσεις ως τώρα.)",
   "auto": false,
   "top": false,
   "cat": "paroxes"
@@ -488,22 +488,6 @@
   "foreas": "Υπουργείο Παιδείας",
   "title": "12-10-26 Για πρώτη φορά φοιτητική εστία για την Ανωτάτη Σχολή Καλών Τεχνών – Χρηματοδότηση 7,45 εκατ. ευρώ",
   "url": "https://www.minedu.gov.gr/?view=article&id=71008:12-10-26-gia-prote-phora-phoitetike-estia-gia-ten-anotate-schole-kalon-technon-chrematodotese-7-45-ekat-euro&catid=1183",
-  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
-  "auto": true
- },
- {
-  "date": "2026-10-09",
-  "foreas": "Υπουργείο Ανάπτυξης",
-  "title": "Τάκης Θεοδωρικάκος: Η αγορά πρέπει να σεβαστεί ότι οι συνάνθρωποί μας που νίκησαν τον καρκίνο δικαιούνται ισότιμη νέα αρχή",
-  "url": "https://www.mindev.gov.gr/takis-theodorikakos-h-agora-prepei-na-sevastei-oti-oi-synanthrwpoi-mas-poy-nikhsan-ton-karkino-dikaiountai-isotimh-nea-arxh/",
-  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
-  "auto": true
- },
- {
-  "date": "2026-10-09",
-  "foreas": "Υπουργείο Υγείας",
-  "title": "Δράσεις - Παρεμβάσεις και Προγράμματα Πρωτοβάθμιας Φροντίδας Υγείας",
-  "url": "https://www.moh.gov.gr/articles/health/dieythynsh-prwtobathmias-frontidas-ygeias/draseis-kai-programmata-agwghs-ygeias",
   "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
   "auto": true
  }
