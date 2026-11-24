@@ -622,3 +622,5 @@
   https://news.google.com/rss/articles/CBMiowFBVV95cUxONlhPajlNVkJIc25icElaSjBLRzRKeGhhd2pnU19BemZ2SkhDV0pEb19UeXZ2a2hYdGU5bFRvcGFKX2ZMZ01uNHA0amthSk5VYkxzeEtJSVJDZ1JhY2dwbzA2aXg4bFZsWFd3TE1mM2JoeXF1b0dWMm9XWFVnYVg4MWxjZk0xWGdjc0o2VE14YWhZbGY1Wko2Snh0WFRFUGZ6NEFB?oc=5
 - 24/11/2026 12:58 · **ΔΕΗ Δελτία Τύπου** · Όμιλος ΔΕΗ: Εξαγορά της ενεργειακής εταιρίας Enegan – Δυναμική είσοδος στη λιανική αγορά ενέργειας της Ιταλίας
   https://www.ppcgroup.com/el/omilos-dei/grafeio-typou/deltia-typou/prosfata/deltia-tipou-2026/noemvrios-2026/omilos-dei-eksagora-ths-energeiakhs-etairias-enegan/
+- 24/11/2026 23:02 · **Ειδήσεις: Εφορία** · Ε9 και ΜΙΔΑ: Το παράθυρο των 13 ετών χωρίς αναδρομικό ΕΝΦΙΑ και οι παγίδες για τους ιδιοκτήτες - B2Green
+  https://news.google.com/rss/articles/CBMidkFVX3lxTE0tZVd6a1NvUUdHQlVnWk1jWnMzaXhLVTREZUtKN3hyVEhoSmg0RTZvUVhDUENpalM1S1pieE1Scm1CMWVaVWExbW5sS1h0SkZxcUd1TFV5RjBQRnVFS2NxUkc1X2pBTk1YQmppeXMteWlDdWF2cVE?oc=5
