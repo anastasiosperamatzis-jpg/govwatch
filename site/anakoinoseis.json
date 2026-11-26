@@ -1,6 +1,6 @@
 [
  {
-  "date": "2026-11-25",
+  "date": "2026-11-26",
   "foreas": "Επιδόματα Τώρα",
   "title": "Συντάξεις: Ημερομηνίες Πληρωμών",
   "url": "/syntaxeis-pliromes.html",
@@ -10,7 +10,7 @@
   "cat": "syntaxeis"
  },
  {
-  "date": "2026-11-25",
+  "date": "2026-11-26",
   "foreas": "Επιδόματα Τώρα",
   "title": "Επίδομα Παιδιού Α21 — Νέα & Ανακοινώσεις",
   "url": "/epidoma-paidiou-a21.html",
@@ -18,6 +18,14 @@
   "auto": false,
   "top": false,
   "cat": "paroxes"
+ },
+ {
+  "date": "2026-11-26",
+  "foreas": "ΟΠΕΚΑ",
+  "title": "359.050.353,33 ευρώ καταβάλλονται σε 1.064.460 δικαιούχους την Δευτέρα 30/11/2026",
+  "url": "https://opeka.gov.gr/359-050-35333-eyro-katavallontai-se-1-064-460-dikaioychoys-tin-deytera-30-11-2026/",
+  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
+  "auto": true
  },
  {
   "date": "2026-11-21",
@@ -482,13 +490,5 @@
   "auto": false,
   "top": true,
   "cat": "oikogeneia"
- },
- {
-  "date": "2026-10-12",
-  "foreas": "Υπουργείο Παιδείας",
-  "title": "12-10-26 Για πρώτη φορά φοιτητική εστία για την Ανωτάτη Σχολή Καλών Τεχνών – Χρηματοδότηση 7,45 εκατ. ευρώ",
-  "url": "https://www.minedu.gov.gr/?view=article&id=71008:12-10-26-gia-prote-phora-phoitetike-estia-gia-ten-anotate-schole-kalon-technon-chrematodotese-7-45-ekat-euro&catid=1183",
-  "text": "Νέα ανακοίνωση στην επίσημη σελίδα του φορέα. Πάτα «Πηγή» για όλες τις λεπτομέρειες.",
-  "auto": true
  }
 ]

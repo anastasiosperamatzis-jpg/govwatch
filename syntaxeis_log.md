@@ -624,3 +624,11 @@
   https://www.ppcgroup.com/el/omilos-dei/grafeio-typou/deltia-typou/prosfata/deltia-tipou-2026/noemvrios-2026/omilos-dei-eksagora-ths-energeiakhs-etairias-enegan/
 - 24/11/2026 23:02 · **Ειδήσεις: Εφορία** · Ε9 και ΜΙΔΑ: Το παράθυρο των 13 ετών χωρίς αναδρομικό ΕΝΦΙΑ και οι παγίδες για τους ιδιοκτήτες - B2Green
   https://news.google.com/rss/articles/CBMidkFVX3lxTE0tZVd6a1NvUUdHQlVnWk1jWnMzaXhLVTREZUtKN3hyVEhoSmg0RTZvUVhDUENpalM1S1pieE1Scm1CMWVaVWExbW5sS1h0SkZxcUd1TFV5RjBQRnVFS2NxUkc1X2pBTk1YQmppeXMteWlDdWF2cVE?oc=5
+- 26/11/2026 17:11 · **Υπουργείο Παιδείας** · 26-11-26 Σοφία Ζαχαράκη: 272 εκατ. ευρώ για την προμήθεια 718 ηλεκτρικών σχολικών λεωφορείων ώστε να εξασφαλιστεί η καθημερινή μετακίνηση 12.240 μαθητών με αναπηρία στα σχολεία τους
+  https://www.minedu.gov.gr/?view=article&id=71215:26-11-26-sophia-zacharake-272-ekat-euro-gia-ten-prometheia-718-elektrikon-scholikon-leophoreion-oste-na-exasphalistei-e-kathemerine-metakinese-12-240-matheton-me-anaperia-sta-scholeia-tous&catid=1183
+- 26/11/2026 17:11 · **Ειδήσεις: Εφορία** · ΜΙΔΑ: Τελευταία ευκαιρία για διόρθωση λαθών στο Ε9 χωρίς αναδρομικό ΕΝΦΙΑ πριν «κλειδώσουν» τα ενοίκια - B2Green
+  https://news.google.com/rss/articles/CBMibkFVX3lxTE5Iamd1M0lHUUN5cWxLcFRtNXpSM1l3MFl6NGFnNnJma092RUlxaHN6NzNyRk5SVHllSnJfNUlMa3N2Ym1nQ2prUlRtNDRDTXRieGd4QzVQeDBTTkxYQi0zcTR1MEQ1akZncTI4Vk93?oc=5
+- 26/11/2026 17:11 · **Ειδήσεις: Εφορία** · Nέο Μητρώο Ακινήτων (ΜΙΔΑ): Πρεμιέρα τον Δεκέμβριο με διορθώσεις στο Ε9 χωρίς αναδρομικό ΕΝΦΙΑ και με στόχο ταχύτερες μεταβιβάσεις ακινήτων - Ελεύθερος Τύπος
+  https://news.google.com/rss/articles/CBMijgJBVV95cUxQVzdUajQ4RERydHNMa0J2RnpsNDNNOTRlVm1ZNUI3NzJvaV8xZklReTBGS1V0RTl3SW5MOWM4MWR0MGJyYzdyNTRpR3ZpOGVFdXAwQ3lySERCaTJUNHhBaXp2d0VVWXhwTC1lMkxZcGFUbmIzbmVUaWNkX2VCN2ZvU3JrZFBfMHZjYnd5TVBjQ3pnSlB1QkxRd3Q1ZzFGejhvVWZxSVpUSjRqcGM3OVdjemQwd3p1SlpObDMwOVBLajZ0WktNY19ob2t5dXQ3ZDFQcHFfRFFXTjBNdGRyRi1Ud0RiUnRGSmdjUkh5OHVQT2czMDZDSzFTYnJMODlkV2trV3l6bE83aWhDS09sMnc?oc=5
+- 26/11/2026 17:11 · **Ειδήσεις: Εφορία** · Νέο Μητρώο Ακινήτων: Διορθώσεις στο Ε9 χωρίς αναδρομικό ΕΝΦΙΑ – Τι αλλάζει για τους ιδιοκτήτες - RPN.gr (Rafina Pikermi News
+  https://news.google.com/rss/articles/CBMifEFVX3lxTE1EUEhRYlIxRi03WnhUdENVMHVQQ3Nxc1EzSWlKdEdKU1JyZTBrOFNLTjZvdHNCMlYtTEszdFJrUTQ2V0ozbFJLZmt6YjhIUnBKVlFkdXJobzVwNGFmUXVySkNnTDVlaEgwajVnaTVwb0dnX3pIVGpscUlWQm8?oc=5
